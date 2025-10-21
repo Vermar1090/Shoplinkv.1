@@ -1,0 +1,26 @@
+/miapp
+ ├── backend/
+ │    ├── server.js
+ │    ├── db.js
+ │    ├── routes/
+ │    │    ├── usuarios.js
+ │    │    ├── tiendas.js
+ │    │    └── productos.js
+ │    └── models.sql
+ ├── frontend/
+ │    ├── index.html
+ │    ├── registro.html
+ │    ├── login.html
+ │    ├── tienda.html
+ │    └── productos.html
+ └── package.json
+1065372852+Jd
+
+
+
+Autenticación de usuarios (login/registro)
+Vista pública de tienda (lo que ven los clientes)
+Gestión de productos (para dueños de tienda)
+Sistema de órdenes (crear y gestionar pedidos)
+Panel administrativo (dashboard del dueño)
+Sistema de comentarios (reseñas de clientes)
