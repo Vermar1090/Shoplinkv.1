@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TiendaApp - Iniciar Sesión</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f6f6f6;
+            color: #202122;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: white;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: #eaecf0;
+            border-bottom: 1px solid #a2a9b1;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: normal;
+            color: #202122;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #54595d;
+            font-size: 14px;
+        }
+
+        .security-indicator {
+            background: #d5fdf4;
+            border: 1px solid #059669;
+            color: #065f46;
+            padding: 8px 12px;
+            font-size: 12px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .security-indicator::before {
+            content: "🔒";
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .tab-switcher {
+            display: flex;
+            border-bottom: 1px solid #a2a9b1;
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #0645ad;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom-color: #0645ad;
+            color: #202122;
+        }
+
+        .tab:hover:not(.active) {
+            background: #eaecf0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #202122;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            font-size: 14px;
+            background: #fff;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #0645ad;
+            box-shadow: 0 0 0 1px #0645ad;
+        }
+
+        .form-group input.error {
+            border-color: #d73027;
+        }
+
+        .error-message {
+            color: #d73027;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: #0645ad;
+            color: white;
+            border: none;
+            border-radius: 2px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #0b4096;
+        }
+
+        .btn-primary:disabled {
+            background: #a2a9b1;
+            cursor: not-allowed;
+        }
+
+        .btn-primary.loading::before {
+            content: "";
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: #d5fdf4;
+            border: 1px solid #059669;
+            color: #065f46;
+            padding: 12px;
+            border-radius: 2px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .password-requirements {
+            font-size: 12px;
+            color: #54595d;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .password-requirements.show {
+            display: block;
+        }
+
+        .password-requirements ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+
+        .password-requirements li.valid {
+            color: #059669;
+        }
+
+        .password-requirements li.invalid {
+            color: #d73027;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .forgot-password a {
+            color: #0645ad;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .rate-limit-warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 12px;
+            border-radius: 2px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .rate-limit-warning.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 20px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>TiendaApp</h1>
+            <p>Sistema de gestión de tiendas online</p>
+        </div>
+
+        <div class="security-indicator">
+            Conexión segura y cifrada
+        </div>
+
+        <div class="form-container">
+            <div class="tab-switcher">
+                <button class="tab active" data-tab="login">Iniciar Sesión</button>
+                <button class="tab" data-tab="register">Registrarse</button>
+            </div>
+
+            <div class="success-message" id="successMessage"></div>
+            <div class="rate-limit-warning" id="rateLimitWarning"></div>
+
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginEmail">Correo electrónico</label>
+                    <input type="email" id="loginEmail" required maxlength="255">
+                    <div class="error-message" id="loginEmailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Contraseña</label>
+                    <input type="password" id="loginPassword" required maxlength="128">
+                    <div class="error-message" id="loginPasswordError"></div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="loginBtn">
+                    Iniciar Sesión
+                </button>
+
+                <div class="forgot-password">
+                    <a href="#" id="forgotPasswordLink">¿Olvidaste tu contraseña?</a>
+                </div>
+            </form>
+
+            <form id="registerForm" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label for="registerName">Nombre completo</label>
+                    <input type="text" id="registerName" required maxlength="100">
+                    <div class="error-message" id="registerNameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail">Correo electrónico</label>
+                    <input type="email" id="registerEmail" required maxlength="255">
+                    <div class="error-message" id="registerEmailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPhone">Teléfono</label>
+                    <input type="tel" id="registerPhone" required maxlength="20">
+                    <div class="error-message" id="registerPhoneError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">Contraseña</label>
+                    <input type="password" id="registerPassword" required maxlength="128">
+                    <div class="password-requirements" id="passwordRequirements">
+                        <p>La contraseña debe cumplir:</p>
+                        <ul>
+                            <li id="req-length">Al menos 8 caracteres</li>
+                            <li id="req-upper">Una letra mayúscula</li>
+                            <li id="req-lower">Una letra minúscula</li>
+                            <li id="req-number">Un número</li>
+                            <li id="req-special">Un carácter especial</li>
+                        </ul>
+                    </div>
+                    <div class="error-message" id="registerPasswordError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar contraseña</label>
+                    <input type="password" id="confirmPassword" required maxlength="128">
+                    <div class="error-message" id="confirmPasswordError"></div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="registerBtn">
+                    Crear Cuenta
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        'use strict';
+
+        const API_BASE = '/api';
+        let isLoading = false;
+
+        // Utilidades
+        function sanitizeInput(input) {
+            return input.trim().replace(/[<>]/g, '');
+        }
+
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function validatePassword(password) {
+            const checks = {
+                length: password.length >= 8,
+                upper: /[A-Z]/.test(password),
+                lower: /[a-z]/.test(password),
+                number: /\d/.test(password),
+                special: /[!@#$%^&*]/.test(password)
+            };
+            checks.isValid = Object.values(checks).every(v => v);
+            return checks;
+        }
+
+        // UI
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            if (field && errorDiv) {
+                field.classList.add('error');
+                errorDiv.textContent = message;
+                errorDiv.classList.add('show');
+            }
+        }
+
+        function clearError(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            if (field && errorDiv) {
+                field.classList.remove('error');
+                errorDiv.classList.remove('show');
+            }
+        }
+
+        function clearAllMessages() {
+            document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+            document.querySelectorAll('input').forEach(el => el.classList.remove('error'));
+            document.getElementById('successMessage').classList.remove('show');
+        }
+
+        function showSuccess(message) {
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successMessage').classList.add('show');
+        }
+
+        function setLoading(btnId, loading) {
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                btn.disabled = loading;
+                btn.classList.toggle('loading', loading);
+            }
+        }
+
+        // Login
+        async function handleLogin(e) {
+            e.preventDefault();
+            if (isLoading) return;
+            
+            clearAllMessages();
+            
+            const email = sanitizeInput(document.getElementById('loginEmail').value);
+            const password = document.getElementById('loginPassword').value;
+
+            if (!validateEmail(email)) {
+                showError('loginEmail', 'Formato de correo inválido');
+                return;
+            }
+
+            if (!password || password.length < 6) {
+                showError('loginPassword', 'Contraseña inválida');
+                return;
+            }
+
+            isLoading = true;
+            setLoading('loginBtn', true);
+
+            try {
+                const response = await fetch(`${API_BASE}/usuarios/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ correo: email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.id) {
+                    // CRÍTICO: Guardar en localStorage para compatibilidad con dashboard
+                    localStorage.setItem('userId', data.id);
+                    localStorage.setItem('userName', data.nombre);
+                    localStorage.setItem('userEmail', email);
+                    
+                    showSuccess('¡Sesión iniciada correctamente! Redirigiendo...');
+                    setTimeout(() => window.location.href = '/dashboard', 1000);
+                } else {
+                    if (data.error && data.error.includes('Usuario no encontrado')) {
+                        showError('loginEmail', 'No existe una cuenta con este correo');
+                    } else if (data.error && data.error.includes('Contraseña incorrecta')) {
+                        showError('loginPassword', 'Contraseña incorrecta');
+                    } else {
+                        showError('loginEmail', 'Error al iniciar sesión');
+                    }
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('loginEmail', 'Error de conexión');
+            } finally {
+                isLoading = false;
+                setLoading('loginBtn', false);
+            }
+        }
+
+        // Register
+        async function handleRegister(e) {
+            e.preventDefault();
+            if (isLoading) return;
+            
+            clearAllMessages();
+
+            const name = sanitizeInput(document.getElementById('registerName').value);
+            const email = sanitizeInput(document.getElementById('registerEmail').value);
+            const phone = sanitizeInput(document.getElementById('registerPhone').value);
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            let hasError = false;
+
+            if (name.length < 2) {
+                showError('registerName', 'El nombre debe tener al menos 2 caracteres');
+                hasError = true;
+            }
+
+            if (!validateEmail(email)) {
+                showError('registerEmail', 'Formato de correo inválido');
+                hasError = true;
+            }
+
+            if (phone.length < 10) {
+                showError('registerPhone', 'Teléfono inválido');
+                hasError = true;
+            }
+
+            const validation = validatePassword(password);
+            if (!validation.isValid) {
+                showError('registerPassword', 'La contraseña no cumple los requisitos');
+                hasError = true;
+            }
+
+            if (password !== confirmPassword) {
+                showError('confirmPassword', 'Las contraseñas no coinciden');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            isLoading = true;
+            setLoading('registerBtn', true);
+
+            try {
+                const response = await fetch(`${API_BASE}/usuarios/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre: name, correo: email, telefono: phone, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.userId) {
+                    // CRÍTICO: Guardar en localStorage
+                    localStorage.setItem('userId', data.userId);
+                    localStorage.setItem('userName', name);
+                    localStorage.setItem('userEmail', email);
+                    
+                    showSuccess('¡Cuenta creada exitosamente! Redirigiendo...');
+                    setTimeout(() => window.location.href = '/dashboard', 1000);
+                } else {
+                    if (data.error && data.error.includes('ya está registrado')) {
+                        showError('registerEmail', 'Ya existe una cuenta con este correo');
+                    } else {
+                        showError('registerName', data.error || 'Error al crear la cuenta');
+                    }
+                }
+            } catch (error) {
+                console.error('Register error:', error);
+                showError('registerName', 'Error de conexión');
+            } finally {
+                isLoading = false;
+                setLoading('registerBtn', false);
+            }
+        }
+
+        // Tabs
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.style.display = 'none');
+            
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            document.getElementById(`${tab}Form`).style.display = 'block';
+            clearAllMessages();
+        }
+
+        // Password requirements
+        function updatePasswordRequirements(password) {
+            const req = document.getElementById('passwordRequirements');
+            if (password.length > 0) {
+                req.classList.add('show');
+                const v = validatePassword(password);
+                document.getElementById('req-length').className = v.length ? 'valid' : 'invalid';
+                document.getElementById('req-upper').className = v.upper ? 'valid' : 'invalid';
+                document.getElementById('req-lower').className = v.lower ? 'valid' : 'invalid';
+                document.getElementById('req-number').className = v.number ? 'valid' : 'invalid';
+                document.getElementById('req-special').className = v.special ? 'valid' : 'invalid';
+            } else {
+                req.classList.remove('show');
+            }
+        }
+
+     
+        (function() {
+            document.addEventListener('contextmenu', e => e.preventDefault());
+
+            document.addEventListener('keydown', function(e) {
+                if (
+                    e.key === 'F12' ||
+                    (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                    (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+                    (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+                    (e.ctrlKey && e.key === 'u')
+                ) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            let devtoolsOpen = false;
+            const threshold = 160;
+            
+            setInterval(() => {
+                if (
+                    window.outerWidth - window.innerWidth > threshold ||
+                    window.outerHeight - window.innerHeight > threshold
+                ) {
+                    if (!devtoolsOpen) {
+                        devtoolsOpen = true;
+                        document.body.innerHTML = '<div style="text-align:center;padding:50px;font-size:20px;">Acceso denegado</div>';
+                    }
+                }
+            }, 1000);
+
+            console.log = console.warn = console.error = console.info = function() {};
+
+            document.addEventListener('selectstart', e => e.preventDefault());
+
+            document.addEventListener('copy', e => e.preventDefault());
+
+            const devtools = /./;
+            devtools.toString = function() {
+                devtoolsOpen = true;
+                document.body.innerHTML = '<div style="text-align:center;padding:50px;font-size:20px;">Acceso denegado</div>';
+            };
+            console.log('%c', devtools);
+
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            if (window.self !== window.top) {
+                window.top.location = window.self.location;
+            }
+        })();
+
+        // Init
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar sesión existente
+            if (localStorage.getItem('userId')) {
+                window.location.href = '/dashboard';
+                return;
+            }
+
+            // Leer parámetro de URL para tab
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            if (tabParam === 'register' || tabParam === 'login') {
+                switchTab(tabParam);
+            }
+
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.getAttribute('data-tab')));
+            });
+
+            document.getElementById('registerPassword').addEventListener('input', function(e) {
+                updatePasswordRequirements(e.target.value);
+            });
+
+            document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                showSuccess('Funcionalidad próximamente disponible');
+            });
+
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', () => clearError(input.id));
+            });
+        });
+    </script>
+</body>
+</html>

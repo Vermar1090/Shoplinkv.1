@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Registro</title>
+  <script>
+    async function registrar() {
+      const data = {
+        nombre: document.getElementById("nombre").value,
+        correo: document.getElementById("correo").value,
+        telefono: document.getElementById("telefono").value,
+        password: document.getElementById("password").value
+      };
+
+      let res = await fetch("/api/usuarios/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      let json = await res.json();
+
+      if (json.error) {
+        alert(json.error);
+        return;
+      }
+
+      // Guardamos datos en localStorage para mantener sesión activa
+      localStorage.setItem("userId", json.userId);
+      localStorage.setItem("username", json.nombre);
+
+      alert("Registro exitoso. Bienvenido, " + json.nombre);
+
+      // Redirigir automáticamente a la tienda
+      window.location.href = "tienda.html";
+    }
+  </script>
+</head>
+<body>
+  <h1>Registro</h1>
+  <input id="nombre" placeholder="Nombre"><br>
+  <input id="correo" placeholder="Correo" type="email"><br>
+  <input id="telefono" placeholder="Teléfono"><br>
+  <input id="password" type="password" placeholder="Contraseña"><br>
+  <button onclick="registrar()">Registrar</button>
+</body>
+</html>

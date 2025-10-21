@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Tiendas - ShopLink</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Header compacto -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <i class="fas fa-store text-blue-600 text-xl"></i>
+          <h1 class="text-xl font-semibold text-gray-900">ShopLink</h1>
+        </div>
+        
+        <!-- Buscador -->
+        <div class="flex-1 max-w-2xl">
+          <div class="relative">
+            <input 
+              type="text" 
+              id="searchInput"
+              placeholder="Buscar tiendas..."
+              class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+          </div>
+        </div>
+
+        <div class="hidden md:flex items-center gap-2">
+          <a href="/login?tab=login" class="flex items-center gap-1.5 text-sm text-gray-700 hover:text-blue-600 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
+            <i class="fas fa-user text-xs"></i>
+            <span>Ingresa</span>
+          </a>
+          <a href="/login?tab=register" class="flex items-center gap-1.5 text-sm bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition">
+            <i class="fas fa-user-plus text-xs"></i>
+            <span>Registro</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filtros compactos -->
+  <div class="bg-white border-b border-gray-200 sticky top-[57px] z-40">
+    <div class="max-w-7xl mx-auto px-4 py-2">
+      <div class="flex items-center gap-2 overflow-x-auto">
+        <button onclick="filtrarPor('recientes')" class="filter-btn text-xs px-3 py-1.5 bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-600 rounded-full transition whitespace-nowrap">
+          <i class="fas fa-clock text-xs mr-1"></i>Recientes
+        </button>
+        <button onclick="filtrarPor('destacados')" class="filter-btn text-xs px-3 py-1.5 bg-gray-100 hover:bg-amber-50 text-gray-700 hover:text-amber-600 rounded-full transition whitespace-nowrap">
+          <i class="fas fa-crown text-xs mr-1"></i>Destacados
+        </button>
+        <button onclick="filtrarPor('mejores')" class="filter-btn text-xs px-3 py-1.5 bg-gray-100 hover:bg-emerald-50 text-gray-700 hover:text-emerald-600 rounded-full transition whitespace-nowrap">
+          <i class="fas fa-star text-xs mr-1"></i>Mejor valorados
+        </button>
+        <button onclick="filtrarPor('populares')" class="filter-btn text-xs px-3 py-1.5 bg-gray-100 hover:bg-purple-50 text-gray-700 hover:text-purple-600 rounded-full transition whitespace-nowrap">
+          <i class="fas fa-fire text-xs mr-1"></i>Populares
+        </button>
+        
+        <div class="border-l border-gray-300 h-6 mx-1"></div>
+        
+        <select id="categoriaFilter" class="text-xs px-3 py-1.5 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+          <option value="">📦 Todas</option>
+        </select>
+
+        <div class="ml-auto text-xs text-gray-600 font-medium" id="resultados-count"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido Principal -->
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <div id="tiendas-container">
+      <div class="text-center py-16">
+        <i class="fas fa-spinner fa-spin text-4xl text-blue-500"></i>
+        <p class="mt-4 text-sm text-gray-600">Cargando tiendas...</p>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <div id="pagination-container" class="mt-8"></div>
+  </main>
+
+  <!-- Footer compacto -->
+  <footer class="bg-white border-t border-gray-200 mt-12">
+    <div class="max-w-7xl mx-auto px-4 py-6 text-center">
+      <p class="text-xs text-gray-500">© 2024 ShopLink - Tu marketplace de confianza</p>
+    </div>
+  </footer>
+
+  <script>
+    let paginaActual = 1;
+    let filtroCategoria = '';
+    let filtroOrden = 'recientes';
+    let busqueda = '';
+    let timeoutBusqueda;
+
+    const iconosCategorias = {
+      'Tecnología': 'fa-laptop',
+      'Moda': 'fa-shirt',
+      'Alimentos': 'fa-utensils',
+      'Hogar': 'fa-house',
+      'Deportes': 'fa-dumbbell',
+      'Libros': 'fa-book',
+      'Electrónica': 'fa-mobile-screen',
+      'Juguetes': 'fa-gamepad',
+      'Salud': 'fa-heart-pulse',
+      'Belleza': 'fa-spa',
+      'Joyería': 'fa-gem',
+      'Mascotas': 'fa-paw',
+      'Automotriz': 'fa-car',
+      'Música': 'fa-music',
+      'Arte': 'fa-palette',
+      'default': 'fa-store'
+    };
+
+    function obtenerIconoCategoria(categoria) {
+      return iconosCategorias[categoria] || iconosCategorias.default;
+    }
+
+    function filtrarPor(tipo) {
+      filtroOrden = tipo;
+      paginaActual = 1;
+      cargarTiendas();
+      
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-100', 'text-blue-700', 'ring-2', 'ring-blue-500');
+      });
+      event.target.closest('button').classList.add('bg-blue-100', 'text-blue-700', 'ring-2', 'ring-blue-500');
+    }
+
+    async function cargarCategorias() {
+      try {
+        const res = await fetch('/api/tiendas/estadisticas/generales');
+        if (!res.ok) throw new Error('Error al cargar categorías');
+        
+        const data = await res.json();
+        const selectCategorias = document.getElementById('categoriaFilter');
+        data.categorias.forEach(cat => {
+          const option = document.createElement('option');
+          option.value = cat.categoria;
+          option.textContent = `${cat.categoria} (${cat.cantidad})`;
+          selectCategorias.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error al cargar categorías:', error);
+      }
+    }
+
+    async function cargarTiendas() {
+      try {
+        const params = new URLSearchParams();
+        params.append('pagina', paginaActual);
+        params.append('orden', filtroOrden);
+        params.append('limite', 24);
+        
+        if (filtroCategoria) params.append('categoria', filtroCategoria);
+        if (busqueda) params.append('q', busqueda);
+        
+        const res = await fetch(`/api/tiendas?${params.toString()}`);
+        if (!res.ok) throw new Error('Error al cargar tiendas');
+        
+        const data = await res.json();
+        mostrarTiendas(data.tiendas);
+        mostrarPaginacion(data.paginacion);
+        
+        document.getElementById('resultados-count').textContent = 
+          `${data.paginacion.total_items} tiendas`;
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('tiendas-container').innerHTML = `
+          <div class="text-center py-16">
+            <i class="fas fa-exclamation-circle text-5xl text-red-400"></i>
+            <h2 class="mt-4 text-lg font-semibold text-gray-900">Error al cargar tiendas</h2>
+            <p class="mt-1 text-sm text-gray-600">Por favor, intenta de nuevo</p>
+            <button onclick="cargarTiendas()" class="mt-4 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
+              <i class="fas fa-redo mr-1"></i>Reintentar
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    function mostrarTiendas(tiendas) {
+      const container = document.getElementById('tiendas-container');
+      
+      if (tiendas.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-16">
+            <i class="fas fa-search text-5xl text-gray-300"></i>
+            <h2 class="mt-4 text-lg font-semibold text-gray-900">No encontramos tiendas</h2>
+            <p class="mt-1 text-sm text-gray-600">Intenta cambiar los filtros</p>
+            <button onclick="limpiarFiltros()" class="mt-4 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
+              <i class="fas fa-times mr-1"></i>Limpiar filtros
+            </button>
+          </div>
+        `;
+        return;
+      }
+      
+      const tiendasHTML = tiendas.map(tienda => {
+        const iconoCategoria = obtenerIconoCategoria(tienda.categoria);
+        return `
+          <div onclick="irATienda('${tienda.token}')" 
+               class="bg-white rounded-lg border border-gray-200 hover:border-blue-400 hover:shadow-md transition cursor-pointer group fade-in p-4">
+            
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition truncate mb-1.5">
+                  ${tienda.nombre}
+                </h3>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 rounded text-xs text-gray-700">
+                  <i class="fas ${iconoCategoria} text-xs"></i>
+                  ${tienda.categoria || 'General'}
+                </span>
+              </div>
+              <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-600 transition text-sm ml-2"></i>
+            </div>
+
+            <p class="text-xs text-gray-600 mb-3 line-clamp-2 leading-relaxed">
+              ${tienda.descripcion || 'Descubre productos en esta tienda'}
+            </p>
+
+            <div class="flex items-center gap-3 pt-3 border-t border-gray-100 text-xs text-gray-600">
+              <span class="flex items-center gap-1">
+                <i class="fas fa-star text-amber-400"></i>
+                <strong class="text-gray-900">${tienda.promedio_calificacion}</strong>
+                <span class="text-gray-400">(${tienda.total_comentarios})</span>
+              </span>
+              <span class="flex items-center gap-1">
+                <i class="fas fa-box text-blue-500"></i>
+                ${tienda.total_productos}
+              </span>
+              ${tienda.total_visitas ? `
+                <span class="flex items-center gap-1">
+                  <i class="fas fa-eye text-purple-500"></i>
+                  ${tienda.total_visitas}
+                </span>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      container.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          ${tiendasHTML}
+        </div>
+      `;
+    }
+
+    function mostrarPaginacion(paginacion) {
+      const container = document.getElementById('pagination-container');
+      
+      if (paginacion.total_paginas <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+      
+      let paginasHTML = `<div class="flex justify-center items-center gap-1 flex-wrap">`;
+      
+      paginasHTML += `
+        <button ${paginaActual === 1 ? 'disabled' : ''} 
+                onclick="cambiarPagina(${paginaActual - 1})"
+                class="px-3 py-1.5 text-sm rounded-lg transition ${paginaActual === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'}">
+          <i class="fas fa-chevron-left text-xs"></i>
+        </button>
+      `;
+      
+      for (let i = 1; i <= paginacion.total_paginas; i++) {
+        if (
+          i === 1 || 
+          i === paginacion.total_paginas || 
+          (i >= paginaActual - 1 && i <= paginaActual + 1)
+        ) {
+          paginasHTML += `
+            <button onclick="cambiarPagina(${i})"
+                    class="px-3 py-1.5 text-sm rounded-lg transition ${i === paginaActual ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'}">
+              ${i}
+            </button>
+          `;
+        } else if (i === paginaActual - 2 || i === paginaActual + 2) {
+          paginasHTML += '<span class="px-2 text-gray-400">...</span>';
+        }
+      }
+      
+      paginasHTML += `
+        <button ${paginaActual === paginacion.total_paginas ? 'disabled' : ''} 
+                onclick="cambiarPagina(${paginaActual + 1})"
+                class="px-3 py-1.5 text-sm rounded-lg transition ${paginaActual === paginacion.total_paginas ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'}">
+          <i class="fas fa-chevron-right text-xs"></i>
+        </button>
+      `;
+      
+      paginasHTML += '</div>';
+      container.innerHTML = paginasHTML;
+    }
+
+    function cambiarPagina(pagina) {
+      paginaActual = pagina;
+      cargarTiendas();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function irATienda(token) {
+      window.location.href = `/tienda/${encodeURIComponent(token)}`;
+    }
+
+    function limpiarFiltros() {
+      filtroCategoria = '';
+      filtroOrden = 'recientes';
+      busqueda = '';
+      paginaActual = 1;
+      document.getElementById('searchInput').value = '';
+      document.getElementById('categoriaFilter').value = '';
+      
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-100', 'text-blue-700', 'ring-2', 'ring-blue-500');
+      });
+      
+      cargarTiendas();
+    }
+
+    document.getElementById('categoriaFilter').addEventListener('change', (e) => {
+      filtroCategoria = e.target.value;
+      paginaActual = 1;
+      cargarTiendas();
+    });
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      clearTimeout(timeoutBusqueda);
+      timeoutBusqueda = setTimeout(() => {
+        busqueda = e.target.value.trim();
+        paginaActual = 1;
+        cargarTiendas();
+      }, 500);
+    });
+
+    // Inicializar
+    cargarCategorias();
+    cargarTiendas();
+  </script>
+</body>
+</html>

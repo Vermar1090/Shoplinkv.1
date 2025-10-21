@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Tienda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #202122;
+        }
+
+        .wiki-header {
+            background: white;
+            border-bottom: 1px solid #a2a9b1;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .wiki-title {
+            font-size: 20px;
+            font-weight: 500;
+            color: #202122;
+        }
+
+        .wiki-subtitle {
+            font-size: 14px;
+            color: #54595d;
+            margin-top: 2px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            background: white;
+            color: #0645ad;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background: #f8f9fa;
+            border-color: #0645ad;
+        }
+
+        .btn-primary {
+            background: #0645ad;
+            color: white;
+            border-color: #0645ad;
+        }
+
+        .btn-primary:hover {
+            background: #0b4096;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .section {
+            background: white;
+            border: 1px solid #a2a9b1;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #eaecf0;
+            padding: 20px 25px;
+            border-bottom: 1px solid #a2a9b1;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .section-desc {
+            font-size: 14px;
+            color: #54595d;
+        }
+
+        .section-body {
+            padding: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #0645ad;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-help {
+            font-size: 13px;
+            color: #54595d;
+            margin-top: 4px;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-box {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .color-box input[type="color"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .switch-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #ccc;
+            border-radius: 24px;
+            transition: 0.3s;
+        }
+
+        .slider:before {
+            content: "";
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        input:checked + .slider {
+            background: #0645ad;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .upload-zone {
+            border: 2px dashed #a2a9b1;
+            border-radius: 4px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .upload-zone:hover, .upload-zone.drag-over {
+            border-color: #0645ad;
+            background: #f0f4ff;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .img-preview {
+            max-width: 200px;
+            max-height: 100px;
+            border: 1px solid #a2a9b1;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .actions-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 20px 25px;
+            background: #f8f9fa;
+            border-top: 1px solid #a2a9b1;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            background: white;
+            border: 1px solid #a2a9b1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 2000;
+            animation: slideIn 0.3s;
+            max-width: 350px;
+        }
+
+        .notification.success {
+            border-left: 4px solid #059669;
+            background: #f0f9f4;
+        }
+
+        .notification.error {
+            border-left: 4px solid #dc2626;
+            background: #fef2f2;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .loading {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #0645ad;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .form-grid, .color-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="wiki-header">
+        <div class="header-content">
+            <div>
+                <h1 class="wiki-title">Configuración de Tienda</h1>
+                <p class="wiki-subtitle" id="storeInfo">Cargando...</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a href="/dashboard" class="btn">← Dashboard</a>
+                <a id="viewStoreLink" href="#" target="_blank" class="btn" style="display: none;">Ver Tienda</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Información Básica de Tienda -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Información de la Tienda</h2>
+                <p class="section-desc">Datos principales de tu tienda</p>
+            </div>
+            <div class="section-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Nombre *</label>
+                        <input type="text" id="nombre" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Categoría</label>
+                        <select id="categoria" class="form-select">
+                            <option value="">Seleccionar</option>
+                            <option value="Restaurante">Restaurante</option>
+                            <option value="Cafetería">Cafetería</option>
+                            <option value="Panadería">Panadería</option>
+                            <option value="Comida Rápida">Comida Rápida</option>
+                            <option value="Pizzería">Pizzería</option>
+                            <option value="Heladería">Heladería</option>
+                            <option value="Bar">Bar</option>
+                            <option value="Tienda">Tienda</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">Descripción</label>
+                        <textarea id="descripcion" class="form-textarea"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">WhatsApp</label>
+                        <input type="tel" id="whatsapp" class="form-input" placeholder="+57 300 123 4567">
+                        <p class="form-help">Formato: +57 seguido del número</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Dirección</label>
+                        <input type="text" id="direccion" class="form-input">
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">Horarios</label>
+                        <textarea id="horarios" class="form-textarea" placeholder="Lunes a Viernes: 9:00 AM - 8:00 PM"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="activa" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <label class="form-label" style="margin: 0;">Tienda Activa</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="actions-bar">
+                <button type="button" class="btn" onclick="loadUserStore()">Descartar</button>
+                <button type="button" class="btn btn-primary" onclick="saveTiendaBasica()">
+                    <span id="btnText1">Guardar Cambios</span>
+                    <span id="spinner1" class="spinner" style="display: none;"></span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Configuración Visual -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Personalización Visual</h2>
+                <p class="section-desc">Colores, logo y banner</p>
+            </div>
+            <div class="section-body">
+                <div class="form-group">
+                    <label class="form-label">Razón Social</label>
+                    <input type="text" id="razonSocial" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Eslogan</label>
+                    <input type="text" id="eslogan" class="form-input">
+                </div>
+
+                <h3 style="font-size: 16px; font-weight: 500; margin: 25px 0 15px;">Imágenes</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Logo</label>
+                        <div class="upload-zone" id="logoUpload">
+                            <div class="upload-icon">📷</div>
+                            <div>Subir logo</div>
+                            <small style="color: #54595d;">PNG, JPG (max 5MB)</small>
+                        </div>
+                        <input type="file" id="logoFile" class="file-input" accept="image/*">
+                        <div id="logoContainer" style="display: none; margin-top: 10px;">
+                            <img id="logoPreview" class="img-preview" style="display: block;">
+                            <button type="button" class="btn" onclick="deleteLogo()" style="margin-top: 10px; background: #dc2626; color: white; border-color: #dc2626;">
+                                🗑️ Eliminar Logo
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Banner</label>
+                        <div class="upload-zone" id="bannerUpload">
+                            <div class="upload-icon">🖼️</div>
+                            <div>Subir banner</div>
+                            <small style="color: #54595d;">PNG, JPG (max 5MB)</small>
+                        </div>
+                        <input type="file" id="bannerFile" class="file-input" accept="image/*">
+                        <div id="bannerContainer" style="display: none; margin-top: 10px;">
+                            <img id="bannerPreview" class="img-preview" style="display: block;">
+                            <button type="button" class="btn" onclick="deleteBanner()" style="margin-top: 10px; background: #dc2626; color: white; border-color: #dc2626;">
+                                🗑️ Eliminar Banner
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 16px; font-weight: 500; margin: 25px 0 15px;">Colores</h3>
+                <div class="color-grid">
+                    <div class="form-group">
+                        <label class="form-label">Color Primario</label>
+                        <div class="color-picker">
+                            <div class="color-box" style="background: #0645ad;">
+                                <input type="color" id="colorPrimario" value="#0645ad">
+                            </div>
+                            <input type="text" id="colorPrimarioHex" class="form-input" value="#0645ad" style="flex: 1;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Color Secundario</label>
+                        <div class="color-picker">
+                            <div class="color-box" style="background: #6c757d;">
+                                <input type="color" id="colorSecundario" value="#6c757d">
+                            </div>
+                            <input type="text" id="colorSecundarioHex" class="form-input" value="#6c757d" style="flex: 1;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Color Acento</label>
+                        <div class="color-picker">
+                            <div class="color-box" style="background: #28a745;">
+                                <input type="color" id="colorAcento" value="#28a745">
+                            </div>
+                            <input type="text" id="colorAcentoHex" class="form-input" value="#28a745" style="flex: 1;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Color Fondo</label>
+                        <div class="color-picker">
+                            <div class="color-box" style="background: #ffffff;">
+                                <input type="color" id="colorFondo" value="#ffffff">
+                            </div>
+                            <input type="text" id="colorFondoHex" class="form-input" value="#ffffff" style="flex: 1;">
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 16px; font-weight: 500; margin: 25px 0 15px;">Opciones de Visualización</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="mostrarBusqueda" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <label>Mostrar Búsqueda</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="mostrarFiltros" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <label>Mostrar Filtros</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="mostrarCategorias" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <label>Mostrar Categorías</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="mostrarComentarios" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <label>Mostrar Comentarios</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="mostrarWhatsapp" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <label>Mostrar WhatsApp</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="mostrarPrecios" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <label>Mostrar Precios</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="actions-bar">
+                <button type="button" class="btn" onclick="loadConfiguracion()">Descartar</button>
+                <button type="button" class="btn btn-primary" onclick="saveConfiguracion()">
+                    <span id="btnText2">Guardar Configuración</span>
+                    <span id="spinner2" class="spinner" style="display: none;"></span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Configuración de Pedidos -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Pedidos y Delivery</h2>
+                <p class="section-desc">Opciones de entrega</p>
+            </div>
+            <div class="section-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Tiempo Preparación (min)</label>
+                        <input type="number" id="tiempoPreparacion" class="form-input" value="30" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pedido Mínimo</label>
+                        <input type="number" id="pedidoMinimo" class="form-input" value="0" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Costo Delivery</label>
+                        <input type="number" id="costoDelivery" class="form-input" value="0" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Zona Delivery</label>
+                        <input type="text" id="zonaDelivery" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="deliveryDisponible" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <label>Delivery Disponible</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="switch-wrapper">
+                            <label class="switch">
+                                <input type="checkbox" id="pickupDisponible" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <label>Pickup Disponible</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="actions-bar">
+                <button type="button" class="btn btn-primary" onclick="saveConfiguracion()">
+                    <span>Guardar Configuración</span>
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        let tiendaId = null;
+        let storeData = null;
+
+        // Cargar tienda del usuario
+        async function loadUserStore() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                showNotification('No se encontró ID de usuario', 'error');
+                setTimeout(() => window.location.href = '/', 2000);
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/tiendas/por-usuario/${userId}`);
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showNotification('No tienes una tienda registrada', 'error');
+                        setTimeout(() => window.location.href = '/', 2000);
+                        return;
+                    }
+                    throw new Error('Error al cargar tienda');
+                }
+
+                storeData = await response.json();
+                tiendaId = storeData.id;
+
+                document.getElementById('storeInfo').textContent = `${storeData.nombre} - ${storeData.categoria || 'Tienda'}`;
+                
+                const viewLink = document.getElementById('viewStoreLink');
+                viewLink.href = `/tienda/${storeData.token}`;
+                viewLink.style.display = 'inline-flex';
+
+                fillStoreData(storeData);
+                await loadConfiguracion();
+
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al cargar la tienda', 'error');
+            }
+        }
+
+        // Llenar datos básicos de la tienda
+        function fillStoreData(store) {
+            document.getElementById('nombre').value = store.nombre || '';
+            document.getElementById('descripcion').value = store.descripcion || '';
+            document.getElementById('categoria').value = store.categoria || '';
+            document.getElementById('whatsapp').value = store.whatsapp || '';
+            document.getElementById('direccion').value = store.direccion || '';
+            document.getElementById('horarios').value = store.horarios || '';
+            document.getElementById('activa').checked = store.activa == 1;
+        }
+
+        // Cargar configuración visual
+        async function loadConfiguracion() {
+            if (!tiendaId) return;
+
+            try {
+                const response = await fetch(`/api/configuracion/tienda/${tiendaId}`);
+                if (!response.ok) throw new Error('Error al cargar configuración');
+
+                const config = await response.json();
+                fillConfigData(config);
+
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Llenar datos de configuración
+        function fillConfigData(config) {
+            document.getElementById('razonSocial').value = config.razon_social || '';
+            document.getElementById('eslogan').value = config.eslogan || '';
+            
+            setColor('colorPrimario', 'colorPrimarioHex', config.color_primario || '#0645ad');
+            setColor('colorSecundario', 'colorSecundarioHex', config.color_secundario || '#6c757d');
+            setColor('colorAcento', 'colorAcentoHex', config.color_acento || '#28a745');
+            setColor('colorFondo', 'colorFondoHex', config.color_fondo || '#ffffff');
+
+            document.getElementById('mostrarBusqueda').checked = config.mostrar_busqueda == 1;
+            document.getElementById('mostrarFiltros').checked = config.mostrar_filtros == 1;
+            document.getElementById('mostrarCategorias').checked = config.mostrar_categorias == 1;
+            document.getElementById('mostrarComentarios').checked = config.mostrar_comentarios == 1;
+            document.getElementById('mostrarWhatsapp').checked = config.mostrar_whatsapp == 1;
+            document.getElementById('mostrarPrecios').checked = config.mostrar_precios == 1;
+
+            document.getElementById('tiempoPreparacion').value = config.tiempo_preparacion_min || 30;
+            document.getElementById('pedidoMinimo').value = config.pedido_minimo || 0;
+            document.getElementById('costoDelivery').value = config.costo_delivery || 0;
+            document.getElementById('zonaDelivery').value = config.zona_delivery || '';
+            document.getElementById('deliveryDisponible').checked = config.delivery_disponible == 1;
+            document.getElementById('pickupDisponible').checked = config.pickup_disponible == 1;
+
+            if (config.logo_url) {
+                const logoPreview = document.getElementById('logoPreview');
+                const logoContainer = document.getElementById('logoContainer');
+                if (logoPreview && logoContainer) {
+                    logoPreview.src = config.logo_url;
+                    logoContainer.style.display = 'block';
+                }
+            }
+            if (config.banner_url) {
+                const bannerPreview = document.getElementById('bannerPreview');
+                const bannerContainer = document.getElementById('bannerContainer');
+                if (bannerPreview && bannerContainer) {
+                    bannerPreview.src = config.banner_url;
+                    bannerContainer.style.display = 'block';
+                }
+            }
+        }
+
+        // Guardar información básica de tienda
+        async function saveTiendaBasica() {
+            if (!tiendaId) return;
+
+            const btn = document.getElementById('btnText1');
+            const spinner = document.getElementById('spinner1');
+            btn.style.display = 'none';
+            spinner.style.display = 'inline-block';
+
+            const data = {
+                nombre: document.getElementById('nombre').value,
+                descripcion: document.getElementById('descripcion').value,
+                categoria: document.getElementById('categoria').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                direccion: document.getElementById('direccion').value,
+                horarios: document.getElementById('horarios').value,
+                activa: document.getElementById('activa').checked ? 1 : 0
+            };
+
+            try {
+                const response = await fetch(`/api/tiendas/${tiendaId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) throw new Error('Error al guardar');
+
+                showNotification('Tienda actualizada correctamente', 'success');
+                await loadUserStore();
+
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al guardar la tienda', 'error');
+            } finally {
+                btn.style.display = 'inline';
+                spinner.style.display = 'none';
+            }
+        }
+
+        // Guardar configuración visual
+        async function saveConfiguracion() {
+            if (!tiendaId) return;
+
+            const btn = document.getElementById('btnText2');
+            const spinner = document.getElementById('spinner2');
+            if (btn && spinner) {
+                btn.style.display = 'none';
+                spinner.style.display = 'inline-block';
+            }
+
+            try {
+                // Primero subir las imágenes si hay
+                const logoFile = document.getElementById('logoFile').files[0];
+                const bannerFile = document.getElementById('bannerFile').files[0];
+                
+                let logoUrl = null;
+                let bannerUrl = null;
+
+                if (logoFile) {
+                    logoUrl = await uploadImage(logoFile, 'logo');
+                }
+
+                if (bannerFile) {
+                    bannerUrl = await uploadImage(bannerFile, 'banner');
+                }
+
+                // Luego guardar la configuración
+                const formData = new FormData();
+                formData.append('razon_social', document.getElementById('razonSocial').value);
+                formData.append('eslogan', document.getElementById('eslogan').value);
+                formData.append('color_primario', document.getElementById('colorPrimario').value);
+                formData.append('color_secundario', document.getElementById('colorSecundario').value);
+                formData.append('color_acento', document.getElementById('colorAcento').value);
+                formData.append('color_fondo', document.getElementById('colorFondo').value);
+                formData.append('mostrar_busqueda', document.getElementById('mostrarBusqueda').checked ? 1 : 0);
+                formData.append('mostrar_filtros', document.getElementById('mostrarFiltros').checked ? 1 : 0);
+                formData.append('mostrar_categorias', document.getElementById('mostrarCategorias').checked ? 1 : 0);
+                formData.append('mostrar_comentarios', document.getElementById('mostrarComentarios').checked ? 1 : 0);
+                formData.append('mostrar_whatsapp', document.getElementById('mostrarWhatsapp').checked ? 1 : 0);
+                formData.append('mostrar_precios', document.getElementById('mostrarPrecios').checked ? 1 : 0);
+                formData.append('tiempo_preparacion_min', document.getElementById('tiempoPreparacion').value);
+                formData.append('pedido_minimo', document.getElementById('pedidoMinimo').value);
+                formData.append('costo_delivery', document.getElementById('costoDelivery').value);
+                formData.append('zona_delivery', document.getElementById('zonaDelivery').value);
+                formData.append('delivery_disponible', document.getElementById('deliveryDisponible').checked ? 1 : 0);
+                formData.append('pickup_disponible', document.getElementById('pickupDisponible').checked ? 1 : 0);
+
+                // Agregar URLs de imágenes si se subieron
+                if (logoUrl) formData.append('logo', logoUrl);
+                if (bannerUrl) formData.append('banner', bannerUrl);
+
+                const response = await fetch(`/api/configuracion/tienda/${tiendaId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Error al guardar configuración');
+                }
+
+                showNotification('Configuración guardada correctamente', 'success');
+                
+                // Limpiar inputs de archivo
+                document.getElementById('logoFile').value = '';
+                document.getElementById('bannerFile').value = '';
+                
+                await loadConfiguracion();
+
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification(error.message || 'Error al guardar configuración', 'error');
+            } finally {
+                if (btn && spinner) {
+                    btn.style.display = 'inline';
+                    spinner.style.display = 'none';
+                }
+            }
+        }
+
+        // Subir imagen individualmente
+        async function uploadImage(file, type) {
+            const formData = new FormData();
+            formData.append(type, file);
+
+            const response = await fetch(`/api/configuracion/tienda/${tiendaId}`, {
+                method: 'PUT',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error al subir ${type}`);
+            }
+
+            const result = await response.json();
+            
+            // La API devuelve la URL en el campo logo_url o banner_url
+            return type === 'logo' ? result.logo_url : result.banner_url;
+        }
+
+        // Configurar color
+        function setColor(colorId, hexId, value) {
+            const colorInput = document.getElementById(colorId);
+            const hexInput = document.getElementById(hexId);
+            const colorBox = colorInput.parentElement;
+
+            colorInput.value = value;
+            hexInput.value = value;
+            colorBox.style.background = value;
+
+            colorInput.addEventListener('input', (e) => {
+                hexInput.value = e.target.value;
+                colorBox.style.background = e.target.value;
+            });
+
+            hexInput.addEventListener('input', (e) => {
+                if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+                    colorInput.value = e.target.value;
+                    colorBox.style.background = e.target.value;
+                }
+            });
+        }
+
+        // Configurar subida de archivos
+        function setupFileUpload(type) {
+            const uploadZone = document.getElementById(`${type}Upload`);
+            const fileInput = document.getElementById(`${type}File`);
+            const preview = document.getElementById(`${type}Preview`);
+
+            uploadZone.addEventListener('click', () => fileInput.click());
+
+            uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone.classList.add('drag-over');
+            });
+
+            uploadZone.addEventListener('dragleave', () => {
+                uploadZone.classList.remove('drag-over');
+            });
+
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    handleFile(file, fileInput, preview);
+                }
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    handleFile(file, fileInput, preview);
+                }
+            });
+        }
+
+        function handleFile(file, input, preview) {
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification('El archivo es muy grande (máx 5MB)', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+                const container = preview.parentElement;
+                if (container) {
+                    container.style.display = 'block';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Eliminar logo
+        async function deleteLogo() {
+            if (!tiendaId) return;
+            
+            if (!confirm('¿Estás seguro de eliminar el logo?')) return;
+
+            try {
+                const response = await fetch(`/api/configuracion/tienda/${tiendaId}/logo`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) throw new Error('Error al eliminar logo');
+
+                showNotification('Logo eliminado correctamente', 'success');
+                
+                const logoContainer = document.getElementById('logoContainer');
+                if (logoContainer) {
+                    logoContainer.style.display = 'none';
+                }
+                document.getElementById('logoFile').value = '';
+
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al eliminar logo', 'error');
+            }
+        }
+
+        // Eliminar banner
+        async function deleteBanner() {
+            if (!tiendaId) return;
+            
+            if (!confirm('¿Estás seguro de eliminar el banner?')) return;
+
+            try {
+                const response = await fetch(`/api/configuracion/tienda/${tiendaId}/banner`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) throw new Error('Error al eliminar banner');
+
+                showNotification('Banner eliminado correctamente', 'success');
+                
+                const bannerContainer = document.getElementById('bannerContainer');
+                if (bannerContainer) {
+                    bannerContainer.style.display = 'none';
+                }
+                document.getElementById('bannerFile').value = '';
+
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al eliminar banner', 'error');
+            }
+        }
+
+        // Notificaciones
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserStore();
+            setupFileUpload('logo');
+            setupFileUpload('banner');
+
+            // Sincronizar colores
+            ['colorPrimario', 'colorSecundario', 'colorAcento', 'colorFondo'].forEach(id => {
+                const colorInput = document.getElementById(id);
+                const hexInput = document.getElementById(id + 'Hex');
+                if (colorInput && hexInput) {
+                    setColor(id, id + 'Hex', colorInput.value);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

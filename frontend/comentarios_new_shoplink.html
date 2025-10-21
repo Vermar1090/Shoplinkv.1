@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Comentarios - TiendaApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f6f6f6;
+            color: #202122;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .admin-header {
+            background: white;
+            border-bottom: 1px solid #a2a9b1;
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 500;
+            color: #202122;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            background: white;
+            color: #0645ad;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: #f8f9fa;
+            border-color: #0645ad;
+        }
+
+        .btn-primary {
+            background: #0645ad;
+            color: white;
+            border-color: #0645ad;
+        }
+
+        .btn-primary:hover {
+            background: #0b4096;
+        }
+
+        .btn-success {
+            background: #059669;
+            color: white;
+            border-color: #059669;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn-danger {
+            background: #d73027;
+            color: white;
+            border-color: #d73027;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        /* Main container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0645ad;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #54595d;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Navigation tabs */
+        .section-nav {
+            background: white;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .nav-tabs {
+            display: flex;
+            border-bottom: 1px solid #a2a9b1;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            background: #f8f9fa;
+            border: none;
+            border-right: 1px solid #a2a9b1;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #0645ad;
+            transition: background 0.2s;
+        }
+
+        .nav-tab:last-child {
+            border-right: none;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #202122;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: #eaecf0;
+        }
+
+        /* Section content */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #202122;
+        }
+
+        /* Comments container */
+        .comments-container {
+            background: white;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .comment-item {
+            padding: 20px;
+            border-bottom: 1px solid #eaecf0;
+            display: flex;
+            gap: 15px;
+        }
+
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+
+        .comment-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0645ad, #0b4096);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .comment-meta {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comment-author {
+            font-weight: 500;
+            color: #202122;
+            margin-bottom: 2px;
+        }
+
+        .comment-date {
+            font-size: 13px;
+            color: #54595d;
+        }
+
+        .comment-rating {
+            display: flex;
+            gap: 2px;
+            margin-top: 5px;
+        }
+
+        .star {
+            color: #fbbf24;
+            font-size: 16px;
+        }
+
+        .star.empty {
+            color: #e5e7eb;
+        }
+
+        .comment-text {
+            color: #202122;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .comment-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* Overview section */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .rating-distribution {
+            background: white;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            padding: 25px;
+        }
+
+        .rating-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .rating-stars {
+            display: flex;
+            margin-right: 15px;
+            width: 100px;
+        }
+
+        .rating-bar {
+            flex: 1;
+            height: 8px;
+            background: #eaecf0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+
+        .rating-bar-fill {
+            height: 100%;
+            background: #fbbf24;
+            transition: width 0.3s ease;
+        }
+
+        .rating-count {
+            font-size: 14px;
+            color: #54595d;
+            width: 30px;
+            text-align: right;
+        }
+
+        .recent-comments {
+            background: white;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            padding: 25px;
+        }
+
+        .recent-comment {
+            padding: 15px 0;
+            border-bottom: 1px solid #eaecf0;
+        }
+
+        .recent-comment:last-child {
+            border-bottom: none;
+        }
+
+        .recent-author {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .recent-text {
+            font-size: 14px;
+            color: #54595d;
+            margin-bottom: 5px;
+        }
+
+        .recent-rating {
+            display: flex;
+            gap: 2px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 4px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eaecf0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #202122;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #54595d;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eaecf0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #54595d;
+            background: white;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #202122;
+        }
+
+        /* Notifications */
+        .notifications-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+        }
+
+        .notification {
+            background: white;
+            border: 1px solid #a2a9b1;
+            border-radius: 4px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 350px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .notification-success {
+            border-left: 4px solid #059669;
+        }
+
+        .notification-error {
+            border-left: 4px solid #d73027;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Loading */
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #0645ad;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .nav-tab {
+                border-right: none;
+                border-bottom: 1px solid #a2a9b1;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comment-item {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .comment-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Notifications container -->
+    <div id="notifications-container" class="notifications-container"></div>
+
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-content">
+            <h1 class="header-title">Gestión de Comentarios</h1>
+            <div class="header-actions">
+                <a href="/dashboard" class="btn">← Dashboard</a>
+                <a href="#" onclick="logout()" class="btn">Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main container -->
+    <main class="main-container">
+        <!-- Stats cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💬</div>
+                <div class="stat-value" id="totalComments">0</div>
+                <div class="stat-label">Total Comentarios</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value" id="averageRating">0.0</div>
+                <div class="stat-label">Calificación Promedio</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-value" id="pendingComments">0</div>
+                <div class="stat-label">Por Aprobar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-value" id="satisfactionRate">0%</div>
+                <div class="stat-label">Satisfacción (4+ estrellas)</div>
+            </div>
+        </div>
+
+        <!-- Navigation tabs -->
+        <nav class="section-nav">
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="switchSection('overview')">Resumen</button>
+                <button class="nav-tab" onclick="switchSection('pending')">Por Aprobar</button>
+                <button class="nav-tab" onclick="switchSection('approved')">Aprobados</button>
+            </div>
+        </nav>
+
+        <!-- Overview section -->
+        <section id="overview" class="section active">
+            <div class="section-header">
+                <h2 class="section-title">Resumen de Comentarios</h2>
+            </div>
+
+            <div class="overview-grid">
+                <div class="rating-distribution">
+                    <h3 style="margin-bottom: 20px; font-size: 16px;">Distribución de Calificaciones</h3>
+                    <div id="ratingDistribution">
+                        <!-- Will be populated by JavaScript -->
+                        <div style="text-align: center; padding: 40px; color: #54595d;">
+                            <div class="spinner"></div>
+                            <div style="margin-top: 10px;">Cargando distribución...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-comments">
+                    <h3 style="margin-bottom: 20px; font-size: 16px;">Comentarios Recientes</h3>
+                    <div id="recentComments">
+                        <!-- Will be populated by JavaScript -->
+                        <div style="text-align: center; padding: 40px; color: #54595d;">
+                            <div class="spinner"></div>
+                            <div style="margin-top: 10px;">Cargando comentarios...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pending comments section -->
+        <section id="pending" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Comentarios Pendientes de Aprobación</h2>
+                <button class="btn btn-primary" onclick="loadPendingComments()">
+                    <span id="pendingSpinner" class="spinner" style="display: none;"></span>
+                    Actualizar
+                </button>
+            </div>
+
+            <div class="comments-container" id="pendingCommentsContainer">
+                <div style="text-align: center; padding: 40px; color: #54595d;">
+                    <div class="spinner"></div>
+                    <div style="margin-top: 10px;">Cargando comentarios pendientes...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Approved comments section -->
+        <section id="approved" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Comentarios Aprobados</h2>
+                <button class="btn btn-primary" onclick="loadApprovedComments()">
+                    <span id="approvedSpinner" class="spinner" style="display: none;"></span>
+                    Actualizar
+                </button>
+            </div>
+
+            <div class="comments-container" id="approvedCommentsContainer">
+                <div style="text-align: center; padding: 40px; color: #54595d;">
+                    <div class="spinner"></div>
+                    <div style="margin-top: 10px;">Cargando comentarios aprobados...</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Confirmation modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirmar acción</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-danger" id="confirmButton">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        const appState = {
+            currentSection: 'overview',
+            tiendaId: null,
+            stats: null,
+            comments: {
+                pending: [],
+                approved: []
+            }
+        };
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                window.location.href = '/';
+                return;
+            }
+            
+            initializeApp();
+        });
+
+        async function initializeApp() {
+            try {
+                await loadUserStore();
+                await loadCommentsStats();
+                await loadPendingComments();
+                
+            } catch (error) {
+                console.error('Error initializing app:', error);
+                showNotification('Error al cargar la aplicación', 'error');
+            }
+        }
+
+        // Load user store
+        async function loadUserStore() {
+            const userId = localStorage.getItem('userId');
+            
+            try {
+                const response = await fetch(`/api/tiendas/por-usuario/${userId}`);
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showNotification('No tienes una tienda registrada', 'error');
+                        setTimeout(() => window.location.href = '/dashboard', 2000);
+                        return;
+                    }
+                    throw new Error('Error al cargar la tienda');
+                }
+
+                const store = await response.json();
+                appState.tiendaId = store.id;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al cargar los datos de la tienda', 'error');
+            }
+        }
+
+        // Switch between sections
+        function switchSection(section) {
+            // Update tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[onclick="switchSection('${section}')"]`).classList.add('active');
+
+            // Show section
+            document.querySelectorAll('.section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            document.getElementById(section).classList.add('active');
+
+            appState.currentSection = section;
+
+            // Load data if needed
+            if (section === 'approved' && appState.comments.approved.length === 0) {
+                loadApprovedComments();
+            }
+        }
+
+        // Load comments statistics
+        async function loadCommentsStats() {
+            try {
+                const response = await fetch(`/api/comentarios/stats/${appState.tiendaId}`);
+                if (!response.ok) throw new Error('Error al cargar estadísticas');
+
+                const stats = await response.json();
+                appState.stats = stats;
+                
+                updateStatsCards(stats);
+                updateRatingDistribution(stats.distribucion || []);
+                updateRecentComments(stats.recientes || []);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al cargar estadísticas', 'error');
+            }
+        }
+
+        // Update stats cards
+        function updateStatsCards(stats) {
+            document.getElementById('totalComments').textContent = stats.resumen.total_comentarios || 0;
+            document.getElementById('averageRating').textContent = stats.resumen.promedio_calificacion || '0.0';
+            document.getElementById('pendingComments').textContent = stats.resumen.pendientes_aprobacion || 0;
+            document.getElementById('satisfactionRate').textContent = stats.resumen.porcentaje_satisfaccion + '%' || '0%';
+        }
+
+        // Update rating distribution
+        function updateRatingDistribution(distribution) {
+            const container = document.getElementById('ratingDistribution');
+            
+            if (!distribution || distribution.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #54595d;">
+                        <div>📊</div>
+                        <div>No hay datos de calificaciones</div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Calculate total for percentages
+            const total = distribution.reduce((sum, item) => sum + item.cantidad, 0);
+            
+            // Create array for all ratings (1-5)
+            const allRatings = [5, 4, 3, 2, 1].map(rating => {
+                const found = distribution.find(d => d.calificacion === rating);
+                return {
+                    rating,
+                    count: found ? found.cantidad : 0,
+                    percentage: total > 0 ? ((found ? found.cantidad : 0) / total) * 100 : 0
+                };
+            });
+
+            container.innerHTML = allRatings.map(item => `
+                <div class="rating-row">
+                    <div class="rating-stars">
+                        ${Array.from({length: 5}, (_, i) => 
+                            `<span class="star ${i < item.rating ? '' : 'empty'}">★</span>`
+                        ).join('')}
+                    </div>
+                    <div class="rating-bar">
+                        <div class="rating-bar-fill" style="width: ${item.percentage}%"></div>
+                    </div>
+                    <div class="rating-count">${item.count}</div>
+                </div>
+            `).join('');
+        }
+
+        // Update recent comments
+        function updateRecentComments(comments) {
+            const container = document.getElementById('recentComments');
+            
+            if (!comments || comments.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #54595d;">
+                        <div>💬</div>
+                        <div>No hay comentarios recientes</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = comments.map(comment => `
+                <div class="recent-comment">
+                    <div class="recent-author">${comment.cliente_nombre}</div>
+                    <div class="recent-text">${comment.comentario.substring(0, 100)}${comment.comentario.length > 100 ? '...' : ''}</div>
+                    ${comment.calificacion ? `
+                        <div class="recent-rating">
+                            ${Array.from({length: 5}, (_, i) => 
+                                `<span class="star ${i < comment.calificacion ? '' : 'empty'}">★</span>`
+                            ).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Load pending comments
+        async function loadPendingComments() {
+            const spinner = document.getElementById('pendingSpinner');
+            if (spinner) spinner.style.display = 'inline-block';
+            
+            try {
+                const response = await fetch(`/api/comentarios/pendientes/${appState.tiendaId}`);
+                if (!response.ok) throw new Error('Error al cargar comentarios pendientes');
+
+                const comments = await response.json();
+                appState.comments.pending = comments;
+                renderComments(comments, 'pendingCommentsContainer', 'pending');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('pendingCommentsContainer').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Error al cargar comentarios</h3>
+                        <button onclick="loadPendingComments()" class="btn">Reintentar</button>
+                    </div>
+                `;
+            } finally {
+                if (spinner) spinner.style.display = 'none';
+            }
+        }
+
+        // Load approved comments
+        async function loadApprovedComments() {
+            const spinner = document.getElementById('approvedSpinner');
+            if (spinner) spinner.style.display = 'inline-block';
+            
+            try {
+                const response = await fetch(`/api/comentarios/tienda/${appState.tiendaId}?limite=50`);
+                if (!response.ok) throw new Error('Error al cargar comentarios aprobados');
+
+                const data = await response.json();
+                appState.comments.approved = data.comentarios || [];
+                renderComments(data.comentarios || [], 'approvedCommentsContainer', 'approved');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('approvedCommentsContainer').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Error al cargar comentarios</h3>
+                        <button onclick="loadApprovedComments()" class="btn">Reintentar</button>
+                    </div>
+                `;
+            } finally {
+                if (spinner) spinner.style.display = 'none';
+            }
+        }
+
+        // Render comments list
+        function renderComments(comments, containerId, type) {
+            const container = document.getElementById(containerId);
+            
+            if (!comments || comments.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No hay comentarios ${type === 'pending' ? 'pendientes' : 'aprobados'}</h3>
+                        <p>${type === 'pending' ? 'Todos los comentarios han sido revisados' : 'No hay comentarios aprobados aún'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = comments.map(comment => `
+                <div class="comment-item" id="comment-${comment.id}">
+                    <div class="comment-avatar">
+                        ${comment.cliente_nombre.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <div class="comment-meta">
+                                <div class="comment-author">${comment.cliente_nombre}</div>
+                                <div class="comment-date">${formatDate(comment.created_at)}</div>
+                                ${comment.calificacion ? `
+                                    <div class="comment-rating">
+                                        ${Array.from({length: 5}, (_, i) => 
+                                            `<span class="star ${i < comment.calificacion ? '' : 'empty'}">★</span>`
+                                        ).join('')}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            ${type === 'pending' ? `
+                                <span class="comment-status status-pending">Pendiente</span>
+                            ` : `
+                                <span class="comment-status status-approved">Aprobado</span>
+                            `}
+                        </div>
+                        <div class="comment-text">${comment.comentario}</div>
+                        <div class="comment-actions">
+                            ${type === 'pending' ? `
+                                <button class="btn btn-sm btn-success" onclick="approveComment(${comment.id})">
+                                    Aprobar
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteComment(${comment.id})">
+                                    Rechazar
+                                </button>
+                            ` : `
+                                <button class="btn btn-sm btn-danger" onclick="deleteComment(${comment.id})">
+                                    Eliminar
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Approve comment
+        async function approveComment(commentId) {
+            try {
+                const response = await fetch(`/api/comentarios/${commentId}/aprobar`, {
+                    method: 'PUT'
+                });
+
+                if (!response.ok) throw new Error('Error al aprobar comentario');
+
+                showNotification('Comentario aprobado correctamente', 'success');
+                
+                // Remove from pending list
+                const commentElement = document.getElementById(`comment-${commentId}`);
+                if (commentElement) {
+                    commentElement.remove();
+                }
+                
+                // Update stats
+                loadCommentsStats();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al aprobar el comentario', 'error');
+            }
+        }
+
+        // Delete comment
+        function deleteComment(commentId) {
+            showConfirmModal(
+                '¿Eliminar este comentario permanentemente?',
+                () => confirmDeleteComment(commentId)
+            );
+        }
+
+        async function confirmDeleteComment(commentId) {
+            try {
+                const response = await fetch(`/api/comentarios/${commentId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) throw new Error('Error al eliminar comentario');
+
+                showNotification('Comentario eliminado correctamente', 'success');
+                
+                // Remove from list
+                const commentElement = document.getElementById(`comment-${commentId}`);
+                if (commentElement) {
+                    commentElement.remove();
+                }
+                
+                // Update stats
+                loadCommentsStats();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al eliminar el comentario', 'error');
+            }
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Show confirmation modal
+        function showConfirmModal(message, onConfirm) {
+            document.getElementById('confirmMessage').textContent = message;
+            document.getElementById('confirmButton').onclick = function() {
+                onConfirm();
+                closeModal();
+            };
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success', duration = 5000) {
+            const container = document.getElementById('notifications-container');
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; cursor: pointer; font-size: 18px; margin-left: 10px;">&times;</button>
+                </div>
+            `;
+
+            container.appendChild(notification);
+
+            if (duration > 0) {
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, duration);
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/';
+        }
+
+        // Close modal with ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Close modal clicking outside
+        document.getElementById('confirmModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Auto-refresh when page becomes visible
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                loadCommentsStats();
+                if (appState.currentSection === 'pending') {
+                    loadPendingComments();
+                } else if (appState.currentSection === 'approved') {
+                    loadApprovedComments();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

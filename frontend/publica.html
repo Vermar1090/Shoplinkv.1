@@ -1,0 +1,2986 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda Online</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Estilos personalizados mejorados */
+        .product-image {
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .cart-item-enter {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Scroll personalizado mejorado */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Estilo para chips de categorías mejorado */
+        .category-chip {
+            transition: all 0.2s ease;
+        }
+
+        .category-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Efecto de elevación para tarjetas mejorado */
+        .elevation-1 {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        }
+
+        .elevation-2 {
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+        }
+
+        .elevation-3 {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+        }
+
+        /* Animación de carga mejorada */
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Mejoras para la interacción */
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Transiciones suaves para modales mejoradas */
+        .modal-transition {
+            transition: all 0.3s ease;
+        }
+
+        /* Nuevos estilos para mejoras */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Mejoras de accesibilidad */
+        .focus-visible:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+
+        /* Mejoras de rendimiento */
+        .will-change-transform {
+            will-change: transform;
+        }
+
+        /* Estilos para modo oscuro */
+        .dark-mode {
+            background-color: #1f2937;
+            color: #f9fafb;
+        }
+
+        .dark-mode .bg-white {
+            background-color: #374151;
+            color: #f9fafb;
+        }
+
+        .dark-mode .text-gray-900 {
+            color: #f9fafb;
+        }
+
+        .dark-mode .text-gray-600 {
+            color: #d1d5db;
+        }
+
+        .dark-mode .bg-gray-100 {
+            background-color: #4b5563;
+        }
+
+        .dark-mode .bg-gray-50 {
+            background-color: #374151;
+        }
+
+        .dark-mode .border-gray-200 {
+            border-color: #4b5563;
+        }
+
+        /* Estilos dinámicos para colores personalizados */
+        .color-primary {
+            background-color: var(--color-primary);
+        }
+
+        .color-secondary {
+            background-color: var(--color-secondary);
+        }
+
+        .color-accent {
+            background-color: var(--color-accent);
+        }
+
+        .text-primary {
+            color: var(--color-primary);
+        }
+
+        .text-secondary {
+            color: var(--color-secondary);
+        }
+
+        .text-accent {
+            color: var(--color-accent);
+        }
+
+        .border-primary {
+            border-color: var(--color-primary);
+        }
+
+        /* Layout styles */
+        .layout-modern .product-card {
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .layout-classic .product-card {
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .layout-minimal .product-card {
+            border: none;
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        /* Error styles */
+        .error-container {
+            min-height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+    <!-- Banner si está configurado -->
+    <div id="storeBanner" class="hidden">
+        <img id="bannerImage" src="" alt="Banner" class="w-full h-32 sm:h-48 object-cover">
+    </div>
+
+    <!-- Header mejorado -->
+    <header class="sticky top-0 z-40 bg-white shadow-sm will-change-transform">
+        <div class="container mx-auto px-2 py-2 flex items-center justify-between">
+            <!-- Botón menú más compacto -->
+            <button id="menuButton" class="p-1.5 rounded-full hover:bg-gray-100 transition-colors focus-visible"
+                aria-label="Abrir menú">
+                <span class="material-icons text-base">menu</span>
+            </button>
+
+            <!-- Logo/Título más compacto -->
+            <div class="flex items-center space-x-2 flex-1 justify-center sm:justify-start">
+                <img id="storeLogo" src="" alt="Logo" class="w-6 h-6 rounded-full hidden">
+                <h1 id="storeTitle" class="text-lg font-medium truncate">Cargando...</h1>
+            </div>
+
+            <!-- Acciones del header compactas -->
+            <div class="flex items-center space-x-1">
+                <!-- Botón búsqueda -->
+                <button id="searchButton"
+                    class="p-1.5 rounded-full hover:bg-gray-100 transition-colors focus-visible hidden"
+                    aria-label="Buscar productos">
+                    <span class="material-icons text-base">search</span>
+                </button>
+
+                <!-- Toggle de vista más compacto -->
+                <div class="flex bg-gray-100 rounded-md p-0.5 mr-1">
+                    <button id="gridViewButton" class="p-0.5 rounded bg-white shadow-sm transition-all focus-visible"
+                        aria-label="Vista de cuadrícula">
+                        <span class="material-icons text-blue-600 text-sm">grid_view</span>
+                    </button>
+                    <button id="listViewButton" class="p-0.5 rounded transition-colors hover:bg-gray-200 focus-visible"
+                        aria-label="Vista de lista">
+                        <span class="material-icons text-sm">view_list</span>
+                    </button>
+                </div>
+
+                <!-- Botón carrito más compacto -->
+                <button id="cartButton"
+                    class="p-1.5 rounded-full hover:bg-gray-100 transition-colors relative focus-visible"
+                    aria-label="Ver carrito">
+                    <span class="material-icons text-base">shopping_cart</span>
+                    <span id="cartBadge"
+                        class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center hidden">
+                        0
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Eslogan -->
+        <div id="storeSlogan" class="hidden bg-gray-100 text-center py-1 text-xs text-gray-600">
+        </div>
+    </header>
+
+    <!-- Mensaje de bienvenida -->
+    <div id="welcomeMessage" class="hidden bg-blue-50 border-b border-blue-200 py-3">
+        <div class="container mx-auto px-4 text-center text-blue-800">
+        </div>
+    </div>
+
+    <!-- Barra de controles mejorada -->
+    <div id="controlsBar" class="bg-white border-b border-gray-200 sticky top-14 z-30 will-change-transform hidden">
+        <div class="container mx-auto px-4 py-2 flex items-center overflow-x-auto">
+
+
+            <div>
+                <strong>Filtros:</strong>
+            </div>
+            <div class="ml-auto">
+                <select id="sortSelect"
+                    class="bg-gray-100 border-0 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="name-asc">Nombre A-Z</option>
+                    <option value="name-desc">Nombre Z-A</option>
+                    <option value="price-asc">Precio: Menor a Mayor</option>
+                    <option value="price-desc">Precio: Mayor a Menor</option>
+                </select>
+            </div>
+        </div>
+        <div id="categoryFilters" class="flex space-x-2 overflow-x-auto pb-1 hidden">
+            <!-- Las categorías se cargarán dinámicamente -->
+        </div>
+    </div>
+
+
+    <!-- Contenido principal mejorado -->
+    <main class="container mx-auto px-4 py-6">
+        <!-- Información de carga mejorada -->
+        <div id="loadingState" class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4">
+            </div>
+            <p class="text-gray-600">Cargando tienda...</p>
+        </div>
+
+        <!-- Estado de error -->
+        <div id="errorState" class="hidden">
+            <div class="error-container">
+                <div class="text-center">
+                    <span class="material-icons text-red-500 text-6xl mb-4">error_outline</span>
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Error al cargar la tienda</h2>
+                    <p class="text-gray-600 mb-4" id="errorMessage">No se pudo cargar la información de la tienda.</p>
+                    <button id="retryButton"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Intentar de nuevo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid de productos mejorado -->
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 hidden">
+            <!-- Los productos se cargarán dinámicamente -->
+        </div>
+
+        <!-- Estado vacío mejorado -->
+        <div id="emptyState" class="hidden text-center py-12">
+            <span class="material-icons text-gray-300 text-6xl mb-4">inventory_2</span>
+            <h3 class="text-xl font-medium text-gray-500 mb-2">No hay productos disponibles</h3>
+            <p class="text-gray-400">Esta tienda aún no tiene productos publicados.</p>
+        </div>
+
+        <!-- Paginación mejorada -->
+        <div id="pagination" class="flex justify-center mt-8 hidden">
+            <div class="flex space-x-2">
+                <button id="prevPage"
+                    class="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors focus-visible"
+                    disabled>Anterior</button>
+                <div id="pageNumbers" class="flex space-x-1"></div>
+                <button id="nextPage"
+                    class="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors focus-visible">Siguiente</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Información de delivery -->
+    <div id="deliveryInfo" class="bg-green-50 border-t border-green-200 py-4 hidden">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-green-800">
+                <div class="flex items-center space-x-1">
+                    <span class="material-icons text-sm">delivery_dining</span>
+                    <span id="deliveryText">Delivery disponible</span>
+                </div>
+                <div class="flex items-center space-x-1">
+                    <span class="material-icons text-sm">timer</span>
+                    <span id="preparationTime">Tiempo de preparación</span>
+                </div>
+                <div class="flex items-center space-x-1" id="minimumOrderInfo">
+                    <span class="material-icons text-sm">shopping_bag</span>
+                    <span id="minimumOrderText">Pedido mínimo</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensaje del pie de página -->
+    <div id="footerMessage" class="bg-gray-100 py-4 text-center text-sm text-gray-600 hidden">
+    </div>
+
+    <!-- FAB Carrito mejorado -->
+    <button id="cartFab"
+        class="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg z-30 hover:bg-blue-700 transition-colors focus-visible hidden will-change-transform"
+        aria-label="Ver carrito">
+        <span class="material-icons">shopping_cart</span>
+        <span id="cartFabBadge"
+            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+    </button>
+
+    <!-- FAB WhatsApp -->
+    <button id="whatsappFab"
+        class="fixed bottom-6 left-6 bg-green-500 text-white p-4 rounded-full shadow-lg z-30 hover:bg-green-600 transition-colors focus-visible hidden will-change-transform"
+        aria-label="Contactar por WhatsApp">
+        <span class="material-icons">chat</span>
+    </button>
+
+    <!-- Modal de búsqueda mejorado -->
+    <div id="searchModal"
+        class="fixed inset-0 bg-white z-50 transform -translate-y-full transition-transform duration-300 modal-transition will-change-transform">
+        <div class="container mx-auto px-4 py-4">
+            <!-- Header del modal mejorado -->
+            <div class="flex items-center mb-4">
+                <button id="closeSearch" class="p-2 rounded-full hover:bg-gray-100 mr-2 focus-visible"
+                    aria-label="Cerrar búsqueda">
+                    <span class="material-icons">arrow_back</span>
+                </button>
+                <div class="flex-1 relative">
+                    <input id="searchInput" type="text" placeholder="Buscar productos..."
+                        class="w-full py-3 px-4 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        aria-label="Buscar productos">
+                    <span class="material-icons absolute right-3 top-3 text-gray-400">search</span>
+                </div>
+            </div>
+
+            <!-- Sugerencias de búsqueda -->
+            <div id="searchSuggestions" class="mb-4 hidden">
+                <h3 class="font-medium text-gray-500 mb-2">Sugerencias:</h3>
+                <div class="flex flex-wrap gap-2">
+                    <!-- Las sugerencias se cargarán dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Resultados de búsqueda mejorados -->
+            <div id="searchResults" class="max-h-[calc(100vh-120px)] overflow-y-auto custom-scroll">
+                <!-- Los resultados se cargarán dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de producto mejorado -->
+    <div id="productModal"
+        class="fixed inset-0 bg-white z-50 transform translate-y-full transition-transform duration-300 overflow-y-auto modal-transition will-change-transform">
+        <div class="container mx-auto px-4 py-4">
+            <!-- Header del modal mejorado -->
+            <div class="flex items-center justify-between mb-4 sticky top-0 bg-white py-2 z-10">
+                <button id="closeProduct" class="p-2 rounded-full hover:bg-gray-100 focus-visible"
+                    aria-label="Cerrar producto">
+                    <span class="material-icons">close</span>
+                </button>
+                <h2 class="text-lg font-medium">Detalles del producto</h2>
+                <div class="w-10"></div> <!-- Espaciador para centrar el título -->
+            </div>
+
+            <!-- Contenido del producto mejorado -->
+            <div id="productContent">
+                <!-- El contenido se cargará dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal del carrito mejorado -->
+    <div id="cartModal" class="fixed inset-0 z-40 flex items-end justify-center hidden">
+        <!-- Overlay mejorado -->
+        <div id="cartOverlay" class="absolute inset-0 bg-black bg-opacity-50"></div>
+
+        <!-- Contenido del carrito mejorado -->
+        <div
+            class="bg-white rounded-t-2xl w-full max-w-md relative z-10 transform translate-y-full transition-transform duration-300 max-h-[80vh] flex flex-col modal-transition will-change-transform">
+            <!-- Mango para arrastrar mejorado -->
+            <div class="flex justify-center py-2 cursor-grab active:cursor-grabbing" id="cartDragHandle">
+                <div class="w-12 h-1 bg-gray-300 rounded-full"></div>
+            </div>
+
+            <!-- Header del carrito mejorado -->
+            <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+                <h2 class="text-lg font-medium">Mi Carrito</h2>
+                <button id="closeCart" class="p-2 rounded-full hover:bg-gray-100 focus-visible"
+                    aria-label="Cerrar carrito">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+
+            <!-- Contenido del carrito mejorado -->
+            <div id="cartContent" class="flex-1 overflow-y-auto custom-scroll p-4">
+                <!-- Los items del carrito se cargarán dinámicamente -->
+            </div>
+
+            <!-- Total y acciones mejoradas -->
+            <div id="cartFooter" class="border-t border-gray-200 p-4 hidden">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-medium">Subtotal:</span>
+                    <span id="cartSubtotal" class="text-lg">$0</span>
+                </div>
+                <div class="flex justify-between items-center mb-4 text-sm text-gray-600">
+                    <span>Envío:</span>
+                    <span id="shippingCost">Gratis</span>
+                </div>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-medium">Total:</span>
+                    <span id="cartTotal" class="text-xl font-bold text-blue-600">$0</span>
+                </div>
+                <button id="checkoutButton"
+                    class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors focus-visible">
+                    Continuar con el pedido
+                </button>
+                <button id="clearCartButton"
+                    class="w-full mt-2 text-gray-600 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors focus-visible">
+                    Vaciar carrito
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menú lateral mejorado - VERSIÓN CORREGIDA -->
+    <div id="sideMenu" class="fixed inset-0 z-40 hidden">
+        <!-- Overlay mejorado -->
+        <div id="menuOverlay" class="absolute inset-0 bg-black bg-opacity-50"></div>
+
+        <!-- Contenido del menú mejorado -->
+        <div
+            class="bg-white w-80 max-w-full h-full relative z-10 transform -translate-x-full transition-transform duration-300 flex flex-col modal-transition will-change-transform">
+            <!-- Header del menú mejorado -->
+            <div class="bg-blue-600 text-white p-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                        <span class="material-icons">store</span>
+                    </div>
+                    <div>
+                        <h2 id="menuStoreName" class="font-medium">Tienda Online</h2>
+                        <p class="text-blue-100 text-sm">Bienvenido</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenido del menú mejorado -->
+            <div class="flex-1 overflow-y-auto custom-scroll">
+                <div class="p-4">
+                    <!-- Información de la tienda -->
+                    <div id="storeInfoMenu" class="mb-4 pb-4 border-b border-gray-200">
+                        <div id="storeAddress" class="flex items-center text-sm text-gray-600 mb-2 hidden">
+                            <span class="material-icons text-sm mr-2">location_on</span>
+                            <span id="addressText"></span>
+                        </div>
+                        <div id="storeHours" class="flex items-center text-sm text-gray-600 hidden">
+                            <span class="material-icons text-sm mr-2">schedule</span>
+                            <span id="hoursText"></span>
+                        </div>
+                    </div>
+
+                    <h3 class="font-medium text-gray-500 text-sm uppercase mb-2">Información</h3>
+                    <div class="space-y-1">
+                        <a href="#"
+                            class="flex items-center p-2 rounded-lg hover:bg-gray-100 transition-colors focus-visible">
+                            <span class="material-icons text-gray-600 mr-3">info</span>
+                            <span>Sobre nosotros</span>
+                        </a>
+                        <a href="#"
+                            class="flex items-center p-2 rounded-lg hover:bg-gray-100 transition-colors focus-visible">
+                            <span class="material-icons text-gray-600 mr-3">contact_support</span>
+                            <span>Contacto</span>
+                        </a>
+                        <a href="/pedios"
+                            class="flex items-center p-2 rounded-lg hover:bg-gray-100 transition-colors focus-visible">
+                            <span class="material-icons text-gray-600 mr-3">local_shipping</span>
+                            <span>Mi pedido</span>
+                        </a>
+                    </div>
+
+                    <h3 class="font-medium text-gray-500 text-sm uppercase mt-4 mb-2" id="categoriesMenuTitle">
+                        Categorías</h3>
+                    <div id="menuCategories" class="space-y-1">
+                        <!-- Las categorías se cargarán dinámicamente -->
+                    </div>
+
+                    <h3 class="font-medium text-gray-500 text-sm uppercase mt-4 mb-2">Compartir</h3>
+                    <div class="space-y-1">
+                        <a href="#"
+                            class="flex items-center p-2 rounded-lg hover:bg-gray-100 transition-colors focus-visible"
+                            id="shareStore">
+                            <span class="material-icons text-gray-600 mr-3">share</span>
+                            <span>Compartir tienda</span>
+                        </a>
+                        <a href="#"
+                            class="flex items-center p-2 rounded-lg hover:bg-gray-100 transition-colors focus-visible"
+                            id="whatsappContact">
+                            <span class="material-icons text-gray-600 mr-3">chat</span>
+                            <span>Contactar por WhatsApp</span>
+                        </a>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <button id="toggleDarkModeMenu"
+                            class="flex items-center p-2 rounded-lg hover:bg-gray-100 transition-colors w-full focus-visible">
+                            <span class="material-icons text-gray-600 mr-3">dark_mode</span>
+                            <span>Modo oscuro</span>
+                            <span id="darkModeStatus" class="ml-auto text-sm text-gray-500">Off</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comentarios section -->
+    <div id="commentsSection" class="hidden bg-white py-8 border-t border-gray-200">
+        <div class="container mx-auto px-4">
+            <h3 class="text-xl font-semibold mb-4">Lo que dicen nuestros clientes</h3>
+            <div id="commentsList" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Los comentarios se cargarán dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Snackbar para notificaciones mejorado -->
+    <div id="snackbar"
+        class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 opacity-0 pointer-events-none will-change-transform">
+        <div class="flex items-center">
+            <span id="snackbarIcon" class="material-icons mr-2">check_circle</span>
+            <span id="snackbarMessage">Mensaje de notificación</span>
+        </div>
+    </div>
+
+    <script>
+        // Estado global de la aplicación mejorado
+        const appState = {
+            store: null,
+            storeConfig: null,
+            products: [],
+            categories: [],
+            comentarios: [],
+            cart: [],
+            activeCategory: 'all',
+            viewMode: 'grid',
+            searchQuery: '',
+            searchResults: [],
+            selectedProduct: null,
+            selectedVariant: null,
+            isMenuOpen: false,
+            isSearchOpen: false,
+            isProductOpen: false,
+            isCartOpen: false,
+            darkMode: false,
+            sortBy: 'name-asc',
+            currentPage: 1,
+            itemsPerPage: 12,
+            totalPages: 1,
+            searchSuggestions: [],
+            isLoading: false,
+            hasError: false,
+            token: null
+        };
+
+        // Configuración de localStorage mejorada
+        const storage = {
+            get: (key, defaultValue = null) => {
+                try {
+                    const item = localStorage.getItem(key);
+                    return item ? JSON.parse(item) : defaultValue;
+                } catch (error) {
+                    console.error('Error al leer del localStorage:', error);
+                    return defaultValue;
+                }
+            },
+
+            set: (key, value) => {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                } catch (error) {
+                    console.error('Error al guardar en localStorage:', error);
+                }
+            },
+
+            remove: (key) => {
+                try {
+                    localStorage.removeItem(key);
+                } catch (error) {
+                    console.error('Error al eliminar del localStorage:', error);
+                }
+            }
+        };
+
+        // Obtener token de la URL
+        function getStoreToken() {
+            const path = window.location.pathname;
+            const token = path.split('/tienda/')[1] || path.split('/')[2] || 'demo';
+            return token;
+        }
+
+        // API calls
+        const API = {
+            async getStore(token) {
+                const response = await fetch(`/api/tiendas/publica/${token}`);
+                if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+                return await response.json();
+            },
+
+            async getStoreConfig(token) {
+                const response = await fetch(`/api/tienda/${token}/config`);
+                if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+                return await response.json();
+            }
+        };
+
+        // Inicializar la aplicación mejorada
+        async function initApp() {
+            // Obtener token
+            appState.token = getStoreToken();
+
+            if (!appState.token) {
+                showError('Token de tienda no válido');
+                return;
+            }
+
+            // Cargar estado guardado
+            appState.cart = storage.get(`cart_${appState.token}`, []);
+            appState.viewMode = storage.get('viewMode', 'grid');
+            appState.darkMode = storage.get('darkMode', false);
+            appState.sortBy = storage.get('sortBy', 'name-asc');
+
+            // Aplicar modo oscuro si está activado
+            if (appState.darkMode) {
+                enableDarkMode();
+            }
+
+            // Configurar event listeners
+            setupEventListeners();
+
+            // Cargar datos de la tienda
+            await loadStoreData();
+
+            // Actualizar UI inicial
+            updateCartUI();
+            applyViewMode();
+            updateDarkModeUI();
+        }
+
+        // Configurar event listeners mejorados - VERSIÓN CORREGIDA
+        function setupEventListeners() {
+            // Esperar a que el DOM esté completamente listo
+            setTimeout(() => {
+                // Botones de vista
+                document.getElementById('gridViewButton').addEventListener('click', () => changeViewMode('grid'));
+                document.getElementById('listViewButton').addEventListener('click', () => changeViewMode('list'));
+
+                // Botones de modales - CON EVENT DELEGATION
+                document.addEventListener('click', (e) => {
+                    // Menú
+                    if (e.target.closest('#menuButton')) {
+                        openMenu();
+                    }
+                    // Búsqueda
+                    if (e.target.closest('#searchButton')) {
+                        openSearch();
+                    }
+                    // Carrito (botón header)
+                    if (e.target.closest('#cartButton')) {
+                        openCart();
+                    }
+                    // Carrito (FAB)
+                    if (e.target.closest('#cartFab')) {
+                        openCart();
+                    }
+                    // Modo oscuro (toggle header)
+                    if (e.target.closest('#darkModeToggle')) {
+                        toggleDarkMode();
+                    }
+                    // WhatsApp FAB
+                    if (e.target.closest('#whatsappFab')) {
+                        contactWhatsApp();
+                    }
+                });
+
+                // Modo oscuro en menú
+                document.getElementById('toggleDarkModeMenu').addEventListener('click', toggleDarkMode);
+
+                // Cerrar modales - VERSIÓN MEJORADA
+                document.getElementById('menuOverlay').addEventListener('click', closeMenu);
+                document.getElementById('closeSearch').addEventListener('click', closeSearch);
+                document.getElementById('closeProduct').addEventListener('click', closeProduct);
+                document.getElementById('closeCart').addEventListener('click', closeCart);
+                document.getElementById('cartOverlay').addEventListener('click', closeCart);
+
+                // También cerrar menú al hacer clic en enlaces internos
+                document.querySelectorAll('#sideMenu a').forEach(link => {
+                    link.addEventListener('click', closeMenu);
+                });
+
+                // Búsqueda en tiempo real con debounce mejorado
+                let searchTimeout;
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        performSearch(e.target.value);
+                    }, 300);
+                });
+
+                // Ordenación
+                document.getElementById('sortSelect').addEventListener('change', (e) => {
+                    appState.sortBy = e.target.value;
+                    storage.set('sortBy', appState.sortBy);
+                    renderProducts();
+                });
+
+                // Paginación
+                document.getElementById('prevPage').addEventListener('click', () => changePage(appState.currentPage - 1));
+                document.getElementById('nextPage').addEventListener('click', () => changePage(appState.currentPage + 1));
+
+                // Compartir tienda
+                document.getElementById('shareStore').addEventListener('click', shareStore);
+                document.getElementById('whatsappContact').addEventListener('click', contactWhatsApp);
+
+                // Vaciar carrito
+                document.getElementById('clearCartButton').addEventListener('click', clearCart);
+
+                // Reintentar carga
+                document.getElementById('retryButton').addEventListener('click', loadStoreData);
+
+                // Gestos táctiles para el carrito mejorados
+                setupCartGestures();
+
+                // Atajos de teclado mejorados
+                document.addEventListener('keydown', handleKeyboardShortcuts);
+
+                // Checkout
+                document.getElementById('checkoutButton').addEventListener('click', checkout);
+
+                console.log('Event listeners configurados correctamente');
+            }, 100);
+        }
+
+        // Cargar datos de la tienda mejorada con API real
+        async function loadStoreData() {
+            try {
+                appState.isLoading = true;
+                appState.hasError = false;
+                showLoadingState();
+
+                // Cargar configuración y datos de la tienda en paralelo
+                const [storeData, storeConfig] = await Promise.all([
+                    API.getStore(appState.token),
+                    API.getStoreConfig(appState.token).catch(err => {
+                        console.warn('No se pudo cargar la configuración:', err);
+                        return null;
+                    })
+                ]);
+
+                // Establecer datos en el estado
+                appState.store = storeData.tienda;
+                appState.storeConfig = storeConfig;
+                appState.categories = storeData.categorias || [];
+                appState.comentarios = storeData.comentarios_recientes || [];
+
+                // Aplanar productos de todas las categorías
+                appState.products = [];
+                appState.categories.forEach(cat => {
+                    if (cat.productos) {
+                        appState.products.push(...cat.productos);
+                    }
+                });
+
+                // Agregar productos sin categoría
+                if (storeData.productos_sin_categoria) {
+                    appState.products.push(...storeData.productos_sin_categoria);
+                }
+
+                // Generar sugerencias de búsqueda
+                generateSearchSuggestions();
+
+                // Aplicar configuración visual si existe
+                if (appState.storeConfig) {
+                    applyStoreConfiguration();
+                }
+
+                // Renderizar la tienda
+                renderStoreInfo();
+                renderCategories();
+                renderProducts();
+                renderComments();
+
+                // Mostrar elementos según configuración
+                showConfiguredElements();
+
+                appState.isLoading = false;
+                hideLoadingState();
+
+            } catch (error) {
+                console.error('Error cargando datos de la tienda:', error);
+                appState.hasError = true;
+                appState.isLoading = false;
+                showError(error.message);
+            }
+        }
+
+        // Aplicar configuración visual de la tienda
+        function applyStoreConfiguration() {
+            const config = appState.storeConfig;
+            if (!config) return;
+
+            // Aplicar colores personalizados
+            if (config.color_primario) {
+                document.documentElement.style.setProperty('--color-primary', config.color_primario);
+            }
+            if (config.color_secundario) {
+                document.documentElement.style.setProperty('--color-secondary', config.color_secundario);
+            }
+            if (config.color_acento) {
+                document.documentElement.style.setProperty('--color-accent', config.color_acento);
+            }
+            if (config.color_fondo) {
+                document.body.style.backgroundColor = config.color_fondo;
+            }
+
+            // Aplicar estilo de layout
+            if (config.estilo_layout) {
+                document.body.classList.add(`layout-${config.estilo_layout}`);
+            }
+
+            // Mostrar logo si existe
+            if (config.logo_url) {
+                const logoElement = document.getElementById('storeLogo');
+                logoElement.src = config.logo_url;
+                logoElement.classList.remove('hidden');
+            }
+
+            // Mostrar banner si existe
+            if (config.banner_url) {
+                const bannerContainer = document.getElementById('storeBanner');
+                const bannerImage = document.getElementById('bannerImage');
+                bannerImage.src = config.banner_url;
+                bannerContainer.classList.remove('hidden');
+            }
+
+            // Mostrar eslogan si existe
+            if (config.eslogan) {
+                const sloganElement = document.getElementById('storeSlogan');
+                sloganElement.textContent = config.eslogan;
+                sloganElement.classList.remove('hidden');
+            }
+
+            // Mostrar mensaje de bienvenida
+            if (config.mensaje_bienvenida) {
+                const welcomeElement = document.getElementById('welcomeMessage');
+                welcomeElement.querySelector('div').textContent = config.mensaje_bienvenida;
+                welcomeElement.classList.remove('hidden');
+            }
+
+            // Mostrar mensaje del pie de página
+            if (config.mensaje_pie_pagina) {
+                const footerElement = document.getElementById('footerMessage');
+                footerElement.textContent = config.mensaje_pie_pagina;
+                footerElement.classList.remove('hidden');
+            }
+        }
+
+        // Mostrar elementos según configuración
+        function showConfiguredElements() {
+            const config = appState.storeConfig;
+            if (!config) return;
+
+            // Mostrar/ocultar búsqueda
+            if (config.mostrar_busqueda) {
+                document.getElementById('searchButton').classList.remove('hidden');
+            }
+
+            // Mostrar/ocultar filtros
+            if (config.mostrar_filtros) {
+                document.getElementById('categoryFilters').classList.remove('hidden');
+                document.getElementById('controlsBar').classList.remove('hidden');
+            }
+
+            // Mostrar/ocultar categorías en el menú
+            if (!config.mostrar_categorias) {
+                document.getElementById('categoriesMenuTitle').classList.add('hidden');
+                document.getElementById('menuCategories').classList.add('hidden');
+            }
+
+            // Mostrar/ocultar comentarios
+            if (config.mostrar_comentarios && appState.comentarios.length > 0) {
+                document.getElementById('commentsSection').classList.remove('hidden');
+            }
+
+            // Mostrar WhatsApp FAB
+            if (config.mostrar_whatsapp && config.whatsapp) {
+                document.getElementById('whatsappFab').classList.remove('hidden');
+            }
+
+            // Mostrar información de delivery
+            if (config.delivery_disponible || config.pickup_disponible) {
+                showDeliveryInfo();
+            }
+        }
+
+        // Mostrar información de delivery
+        function showDeliveryInfo() {
+            const config = appState.storeConfig;
+            const deliveryInfo = document.getElementById('deliveryInfo');
+
+            let deliveryText = '';
+            if (config.delivery_disponible && config.pickup_disponible) {
+                deliveryText = 'Delivery y Retiro disponibles';
+            } else if (config.delivery_disponible) {
+                deliveryText = 'Delivery disponible';
+                if (config.costo_delivery > 0) {
+                    deliveryText += ` (${config.costo_delivery})`;
+                }
+            } else if (config.pickup_disponible) {
+                deliveryText = 'Solo retiro en local';
+            }
+
+            document.getElementById('deliveryText').textContent = deliveryText;
+
+            if (config.tiempo_preparacion_min) {
+                document.getElementById('preparationTime').textContent = `${config.tiempo_preparacion_min} min aprox.`;
+            }
+
+            if (config.pedido_minimo > 0) {
+                document.getElementById('minimumOrderText').textContent = `Pedido mínimo ${config.pedido_minimo}`;
+            } else {
+                document.getElementById('minimumOrderInfo').style.display = 'none';
+            }
+
+            deliveryInfo.classList.remove('hidden');
+        }
+
+        // Estados de la aplicación
+        function showLoadingState() {
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('errorState').classList.add('hidden');
+            document.getElementById('productsGrid').classList.add('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+        }
+
+        function hideLoadingState() {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('productsGrid').classList.remove('hidden');
+        }
+
+        function showError(message) {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('productsGrid').classList.add('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        // Configurar gestos para el carrito
+        function setupCartGestures() {
+            const cartModal = document.getElementById('cartModal').querySelector('.bg-white');
+            const dragHandle = document.getElementById('cartDragHandle');
+            let startY = 0;
+            let currentY = 0;
+            let isDragging = false;
+
+            dragHandle.addEventListener('touchstart', (e) => {
+                startY = e.touches[0].clientY;
+                isDragging = true;
+            });
+
+            dragHandle.addEventListener('mousedown', (e) => {
+                startY = e.clientY;
+                isDragging = true;
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+            });
+
+            function handleMouseMove(e) {
+                if (!isDragging) return;
+                currentY = e.clientY;
+                const diff = currentY - startY;
+
+                if (diff > 0) {
+                    cartModal.style.transform = `translateY(${diff}px)`;
+                }
+            }
+
+            function handleMouseUp() {
+                if (!isDragging) return;
+                isDragging = false;
+                const diff = currentY - startY;
+
+                if (diff > 100) {
+                    closeCart();
+                } else {
+                    cartModal.style.transform = 'translateY(0)';
+                }
+
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+            }
+
+            cartModal.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                currentY = e.touches[0].clientY;
+                const diff = currentY - startY;
+
+                if (diff > 0) {
+                    cartModal.style.transform = `translateY(${diff}px)`;
+                }
+            });
+
+            cartModal.addEventListener('touchend', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                const diff = currentY - startY;
+
+                if (diff > 100) {
+                    closeCart();
+                } else {
+                    cartModal.style.transform = 'translateY(0)';
+                }
+            });
+        }
+
+        // Manejar atajos de teclado mejorados
+        function handleKeyboardShortcuts(e) {
+            // ESC para cerrar modales
+            if (e.key === 'Escape') {
+                if (appState.isSearchOpen) closeSearch();
+                else if (appState.isProductOpen) closeProduct();
+                else if (appState.isCartOpen) closeCart();
+                else if (appState.isMenuOpen) closeMenu();
+            }
+
+            // Ctrl+K o / para buscar (solo si la búsqueda está habilitada)
+            if (appState.storeConfig?.mostrar_busqueda && ((e.ctrlKey && e.key === 'k') || e.key === '/')) {
+                e.preventDefault();
+                openSearch();
+            }
+
+            // Ctrl+D para modo oscuro
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                toggleDarkMode();
+            }
+
+            // Flechas para navegación (cuando el foco no está en un input)
+            if (!['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+                if (e.key === 'ArrowLeft') {
+                    if (appState.currentPage > 1) {
+                        changePage(appState.currentPage - 1);
+                    }
+                } else if (e.key === 'ArrowRight') {
+                    if (appState.currentPage < appState.totalPages) {
+                        changePage(appState.currentPage + 1);
+                    }
+                }
+            }
+        }
+
+        // Generar sugerencias de búsqueda
+        function generateSearchSuggestions() {
+            const productNames = appState.products.map(p => p.nombre);
+            const categoryNames = appState.categories.map(c => c.nombre);
+
+            // Combinar y eliminar duplicados
+            appState.searchSuggestions = [...new Set([...productNames, ...categoryNames])].slice(0, 8);
+        }
+
+        // Renderizar información de la tienda mejorada
+        function renderStoreInfo() {
+            if (appState.store) {
+                document.getElementById('storeTitle').textContent = appState.store.nombre;
+                document.getElementById('menuStoreName').textContent = appState.store.nombre;
+                document.title = appState.store.nombre + " - Tienda Online";
+
+                // Actualizar información en el menú
+                if (appState.store.direccion) {
+                    document.getElementById('addressText').textContent = appState.store.direccion;
+                    document.getElementById('storeAddress').classList.remove('hidden');
+                }
+
+                if (appState.store.horarios) {
+                    document.getElementById('hoursText').textContent = appState.store.horarios;
+                    document.getElementById('storeHours').classList.remove('hidden');
+                }
+
+                // Actualizar meta tags para SEO
+                updateMetaTags();
+            }
+        }
+
+        // Actualizar meta tags para SEO
+        function updateMetaTags() {
+            // Crear o actualizar meta description
+            let metaDescription = document.querySelector('meta[name="description"]');
+            if (!metaDescription) {
+                metaDescription = document.createElement('meta');
+                metaDescription.name = "description";
+                document.head.appendChild(metaDescription);
+            }
+            metaDescription.content = appState.store.descripcion || "Tienda online con productos de calidad";
+
+            // Actualizar Open Graph tags
+            updateOpenGraphTags();
+        }
+
+        // Actualizar Open Graph tags
+        function updateOpenGraphTags() {
+            const ogTitle = document.querySelector('meta[property="og:title"]');
+            if (ogTitle) ogTitle.content = appState.store.nombre;
+
+            const ogDescription = document.querySelector('meta[property="og:description"]');
+            if (ogDescription) ogDescription.content = appState.store.descripcion || "Tienda online con productos de calidad";
+
+            const ogUrl = document.querySelector('meta[property="og:url"]');
+            if (ogUrl) ogUrl.content = window.location.href;
+        }
+
+        // Renderizar categorías mejoradas
+        function renderCategories() {
+            const filtersContainer = document.getElementById('categoryFilters');
+            const menuContainer = document.getElementById('menuCategories');
+
+            // Limpiar contenedores
+            filtersContainer.innerHTML = '';
+            menuContainer.innerHTML = '';
+
+            // Solo mostrar si está configurado
+            if (!appState.storeConfig?.mostrar_filtros && !appState.storeConfig?.mostrar_categorias) {
+                return;
+            }
+
+            // Categoría "Todos"
+            if (appState.storeConfig?.mostrar_filtros) {
+                const allChip = createCategoryChip('all', 'Todos', true);
+                filtersContainer.appendChild(allChip);
+            }
+
+            // Categorías de la tienda
+            if (appState.categories && appState.categories.length > 0) {
+                appState.categories.forEach(cat => {
+                    if (appState.storeConfig?.mostrar_filtros) {
+                        const chip = createCategoryChip(cat.id, cat.nombre, false);
+                        filtersContainer.appendChild(chip);
+                    }
+
+                    if (appState.storeConfig?.mostrar_categorias) {
+                        const menuItem = createCategoryMenuItem(cat.id, cat.nombre);
+                        menuContainer.appendChild(menuItem);
+                    }
+                });
+            }
+        }
+
+        // Crear chip de categoría mejorado
+        function createCategoryChip(id, name, isActive) {
+            const chip = document.createElement('button');
+            chip.className = `category-chip px-3 py-1 rounded-full whitespace-nowrap transition-colors focus-visible ${isActive ? 'color-primary text-white font-medium' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`;
+            chip.textContent = name;
+            chip.dataset.categoryId = id;
+            chip.setAttribute('aria-label', `Filtrar por categoría ${name}`);
+            chip.setAttribute('aria-pressed', isActive);
+
+            chip.addEventListener('click', () => {
+                // Actualizar estado
+                appState.activeCategory = id;
+                appState.currentPage = 1;
+
+                // Actualizar UI
+                document.querySelectorAll('.category-chip').forEach(c => {
+                    c.classList.remove('color-primary', 'text-white', 'font-medium');
+                    c.classList.add('bg-gray-100', 'text-gray-700');
+                    c.setAttribute('aria-pressed', 'false');
+                });
+
+                chip.classList.remove('bg-gray-100', 'text-gray-700');
+                chip.classList.add('color-primary', 'text-white', 'font-medium');
+                chip.setAttribute('aria-pressed', 'true');
+
+                // Renderizar productos filtrados
+                renderProducts();
+            });
+
+            return chip;
+        }
+
+        // Crear item de categoría para el menú mejorado
+        function createCategoryMenuItem(id, name) {
+            const item = document.createElement('a');
+            item.href = '#';
+            item.className = 'flex items-center p-2 rounded-lg hover:bg-gray-100 transition-colors focus-visible';
+            item.innerHTML = `
+                <span class="material-icons text-gray-600 mr-3">category</span>
+                <span>${name}</span>
+            `;
+            item.setAttribute('aria-label', `Ver categoría ${name}`);
+
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                appState.activeCategory = id;
+                appState.currentPage = 1;
+                renderProducts();
+                closeMenu();
+            });
+
+            return item;
+        }
+
+        // Renderizar comentarios
+        function renderComments() {
+            if (!appState.storeConfig?.mostrar_comentarios || !appState.comentarios.length) {
+                return;
+            }
+
+            const container = document.getElementById('commentsList');
+            container.innerHTML = appState.comentarios.map(comment => `
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-900">${comment.cliente_nombre || 'Cliente'}</h4>
+                            <div class="flex items-center">
+                                ${Array.from({ length: 5 }, (_, i) => `
+                                    <span class="material-icons text-sm ${i < (comment.calificacion || 0) ? 'text-yellow-500' : 'text-gray-300'}">star</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <span class="text-xs text-gray-500">
+                            ${comment.created_at ? new Date(comment.created_at).toLocaleDateString() : ''}
+                        </span>
+                    </div>
+                    <p class="text-gray-700 text-sm">${comment.comentario}</p>
+                </div>
+            `).join('');
+
+            document.getElementById('commentsSection').classList.remove('hidden');
+        }
+
+        // Ordenar productos
+        function sortProducts(products) {
+            const sortedProducts = [...products];
+
+            switch (appState.sortBy) {
+                case 'name-asc':
+                    sortedProducts.sort((a, b) => a.nombre.localeCompare(b.nombre));
+                    break;
+                case 'name-desc':
+                    sortedProducts.sort((a, b) => b.nombre.localeCompare(a.nombre));
+                    break;
+                case 'price-asc':
+                    sortedProducts.sort((a, b) => a.precio_base - b.precio_base);
+                    break;
+                case 'price-desc':
+                    sortedProducts.sort((a, b) => b.precio_base - a.precio_base);
+                    break;
+                default:
+                    sortedProducts.sort((a, b) => a.nombre.localeCompare(b.nombre));
+            }
+
+            return sortedProducts;
+        }
+
+        // Renderizar productos mejorados
+        function renderProducts() {
+            const container = document.getElementById('productsGrid');
+
+            if (!appState.products || appState.products.length === 0) {
+                container.innerHTML = '';
+                document.getElementById('emptyState').classList.remove('hidden');
+                document.getElementById('pagination').classList.add('hidden');
+                return;
+            }
+
+            // Filtrar productos por categoría activa
+            let filteredProducts = appState.products;
+            if (appState.activeCategory !== 'all') {
+                filteredProducts = appState.products.filter(p => p.categoria_id == appState.activeCategory);
+            }
+
+            // Ordenar productos
+            filteredProducts = sortProducts(filteredProducts);
+
+            // Calcular paginación
+            const totalItems = filteredProducts.length;
+            appState.totalPages = Math.ceil(totalItems / appState.itemsPerPage);
+            const startIndex = (appState.currentPage - 1) * appState.itemsPerPage;
+            const paginatedProducts = filteredProducts.slice(startIndex, startIndex + appState.itemsPerPage);
+
+            // Mostrar estado vacío si no hay productos
+            if (paginatedProducts.length === 0) {
+                container.innerHTML = '';
+                document.getElementById('emptyState').classList.remove('hidden');
+                document.getElementById('pagination').classList.add('hidden');
+                return;
+            }
+
+            // Ocultar estado vacío
+            document.getElementById('emptyState').classList.add('hidden');
+
+            // Renderizar productos
+            container.innerHTML = paginatedProducts.map(product => {
+                const hasVariants = product.variantes && product.variantes.length > 0;
+                const showPrices = appState.storeConfig?.mostrar_precios !== false;
+                const showImages = appState.storeConfig?.mostrar_imagenes_productos !== false;
+
+                return `
+                    <div class="product-card bg-white rounded-lg overflow-hidden elevation-1 hover:elevation-2 transition-shadow cursor-pointer fade-in" data-product-id="${product.id}">
+                        ${showImages ? `
+                          <div class="product-image-container relative overflow-hidden bg-gray-100">
+                                ${product.imagen_principal ?
+                            `<img src="${product.imagen_principal}" alt="${product.nombre}" class="product-image w-full h-48 object-cover" loading="lazy">` :
+                            `<div class="w-full h-48 flex items-center justify-center text-gray-400">
+                                        <span class="material-icons text-4xl">image</span>
+                                    </div>`
+                        }
+                            </div>
+                        ` : ''}
+                        <div class="p-3">
+                            <h3 class="font-medium text-gray-900 mb-1 line-clamp-2">${product.nombre}</h3>
+                            <p class="text-gray-600 text-sm mb-2 line-clamp-2">${product.descripcion || 'Sin descripción'}</p>
+                            <div class="flex justify-between items-center">
+                                ${showPrices ? `
+                                    <div>
+                                        <span class="text-lg font-bold text-primary">${(product.precio_base || 0).toFixed(2)}</span>
+                                    </div>
+                                ` : '<div></div>'}
+                                <button class="add-to-cart-btn color-primary text-white p-2 rounded-full hover:opacity-90 transition-opacity focus-visible" 
+                                        onclick="event.stopPropagation(); addToCart(${product.id})"
+                                        aria-label="Agregar ${product.nombre} al carrito">
+                                    <span class="material-icons text-sm">add_shopping_cart</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Agregar event listeners a las tarjetas de producto
+            container.querySelectorAll('.product-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const productId = parseInt(card.dataset.productId);
+                    openProductModal(productId);
+                });
+            });
+
+            // Actualizar paginación
+            updatePagination(totalItems);
+
+            // Aplicar modo de vista
+            applyViewMode();
+        }
+
+        // Actualizar paginación
+        function updatePagination(totalItems) {
+            const paginationContainer = document.getElementById('pagination');
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            const prevButton = document.getElementById('prevPage');
+            const nextButton = document.getElementById('nextPage');
+
+            if (appState.totalPages <= 1) {
+                paginationContainer.classList.add('hidden');
+                return;
+            }
+
+            paginationContainer.classList.remove('hidden');
+
+            // Actualizar estado de botones
+            prevButton.disabled = appState.currentPage === 1;
+            nextButton.disabled = appState.currentPage === appState.totalPages;
+
+            // Generar números de página
+            pageNumbersContainer.innerHTML = '';
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, appState.currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(appState.totalPages, startPage + maxVisiblePages - 1);
+
+            // Ajustar si estamos cerca del final
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+
+            // Botón para primera página si es necesario
+            if (startPage > 1) {
+                const firstPageButton = document.createElement('button');
+                firstPageButton.className = 'px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors focus-visible';
+                firstPageButton.textContent = '1';
+                firstPageButton.addEventListener('click', () => changePage(1));
+                pageNumbersContainer.appendChild(firstPageButton);
+
+                if (startPage > 2) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.className = 'px-2 py-1';
+                    ellipsis.textContent = '...';
+                    pageNumbersContainer.appendChild(ellipsis);
+                }
+            }
+
+            // Botones de páginas
+            for (let i = startPage; i <= endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.className = `px-3 py-1 rounded-lg transition-colors focus-visible ${i === appState.currentPage ? 'color-primary text-white' : 'bg-gray-200 hover:bg-gray-300'
+                    }`;
+                pageButton.textContent = i;
+                pageButton.addEventListener('click', () => changePage(i));
+                pageNumbersContainer.appendChild(pageButton);
+            }
+
+            // Botón para última página si es necesario
+            if (endPage < appState.totalPages) {
+                if (endPage < appState.totalPages - 1) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.className = 'px-2 py-1';
+                    ellipsis.textContent = '...';
+                    pageNumbersContainer.appendChild(ellipsis);
+                }
+
+                const lastPageButton = document.createElement('button');
+                lastPageButton.className = 'px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors focus-visible';
+                lastPageButton.textContent = appState.totalPages;
+                lastPageButton.addEventListener('click', () => changePage(appState.totalPages));
+                pageNumbersContainer.appendChild(lastPageButton);
+            }
+        }
+
+        // Cambiar página
+        function changePage(page) {
+            if (page < 1 || page > appState.totalPages) return;
+
+            appState.currentPage = page;
+            renderProducts();
+
+            // Scroll suave hacia arriba
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Cambiar modo de vista
+        function changeViewMode(mode) {
+            appState.viewMode = mode;
+            storage.set('viewMode', mode);
+            applyViewMode();
+        }
+
+        // Aplicar modo de vista actual mejorado
+        function applyViewMode() {
+            const container = document.getElementById('productsGrid');
+            const gridButton = document.getElementById('gridViewButton');
+            const listButton = document.getElementById('listViewButton');
+
+            if (!container) return;
+
+            // Actualizar clases del contenedor
+            if (appState.viewMode === 'grid') {
+                container.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
+            } else {
+                container.className = 'grid grid-cols-1 gap-4';
+
+                // Aplicar clases específicas para vista de lista
+                container.querySelectorAll('.product-card').forEach(card => {
+                    card.classList.add('flex', 'items-center');
+                    const imageContainer = card.querySelector('.product-image-container');
+                    const infoContainer = card.querySelector('.p-3');
+
+                    if (imageContainer) {
+                        imageContainer.classList.add('w-32', 'h-32', 'flex-shrink-0');
+                        imageContainer.classList.remove('h-48');
+                    }
+
+                    if (infoContainer) {
+                        infoContainer.classList.add('flex-1');
+                    }
+                });
+            }
+
+            // Actualizar botones
+            if (appState.viewMode === 'grid') {
+                gridButton.classList.add('bg-white', 'shadow-sm');
+                gridButton.querySelector('.material-icons').classList.add('text-primary');
+                gridButton.classList.remove('hover:bg-gray-200');
+                listButton.classList.remove('bg-white', 'shadow-sm');
+                listButton.querySelector('.material-icons').classList.remove('text-primary');
+                listButton.classList.add('hover:bg-gray-200');
+            } else {
+                listButton.classList.add('bg-white', 'shadow-sm');
+                listButton.querySelector('.material-icons').classList.add('text-primary');
+                listButton.classList.remove('hover:bg-gray-200');
+                gridButton.classList.remove('bg-white', 'shadow-sm');
+                gridButton.querySelector('.material-icons').classList.remove('text-primary');
+                gridButton.classList.add('hover:bg-gray-200');
+            }
+        }
+
+        // Alternar modo oscuro
+        function toggleDarkMode() {
+            appState.darkMode = !appState.darkMode;
+            storage.set('darkMode', appState.darkMode);
+
+            if (appState.darkMode) {
+                enableDarkMode();
+            } else {
+                disableDarkMode();
+            }
+
+            updateDarkModeUI();
+        }
+
+        // Habilitar modo oscuro
+        function enableDarkMode() {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Deshabilitar modo oscuro
+        function disableDarkMode() {
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Actualizar UI del modo oscuro
+        function updateDarkModeUI() {
+            const statusElement = document.getElementById('darkModeStatus');
+            if (statusElement) {
+                statusElement.textContent = appState.darkMode ? 'On' : 'Off';
+            }
+        }
+
+        // Abrir modal de búsqueda mejorado
+        function openSearch() {
+            if (!appState.storeConfig?.mostrar_busqueda) return;
+
+            appState.isSearchOpen = true;
+            document.getElementById('searchModal').classList.remove('-translate-y-full');
+            document.getElementById('searchInput').focus();
+            document.body.style.overflow = 'hidden';
+
+            // Mostrar sugerencias si existen
+            if (appState.searchSuggestions.length > 0) {
+                showSearchSuggestions();
+            }
+        }
+
+        // Cerrar modal de búsqueda mejorado
+        function closeSearch() {
+            appState.isSearchOpen = false;
+            document.getElementById('searchModal').classList.add('-translate-y-full');
+            document.body.style.overflow = '';
+            document.getElementById('searchInput').value = '';
+            appState.searchQuery = '';
+            appState.searchResults = [];
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('searchSuggestions').classList.add('hidden');
+        }
+
+        // Mostrar sugerencias de búsqueda
+        function showSearchSuggestions() {
+            const suggestionsContainer = document.getElementById('searchSuggestions');
+            const suggestionsList = suggestionsContainer.querySelector('.flex-wrap');
+
+            suggestionsList.innerHTML = appState.searchSuggestions.map(suggestion => `
+                <button class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors focus-visible" onclick="setSearchSuggestion('${suggestion}')">
+                    ${suggestion}
+                </button>
+            `).join('');
+
+            suggestionsContainer.classList.remove('hidden');
+        }
+
+        // Establecer sugerencia de búsqueda
+        function setSearchSuggestion(suggestion) {
+            document.getElementById('searchInput').value = suggestion;
+            performSearch(suggestion);
+        }
+
+        // Realizar búsqueda mejorada
+        function performSearch(query) {
+            appState.searchQuery = query;
+
+            if (!query.trim()) {
+                document.getElementById('searchResults').innerHTML = '';
+                document.getElementById('searchSuggestions').classList.remove('hidden');
+                return;
+            }
+
+            // Ocultar sugerencias cuando se realiza una búsqueda
+            document.getElementById('searchSuggestions').classList.add('hidden');
+
+            // Filtrar productos
+            const results = appState.products.filter(product => {
+                const searchText = `${product.nombre} ${product.descripcion || ''} ${appState.categories.find(c => c.id === product.categoria_id)?.nombre || ''}`.toLowerCase();
+                return searchText.includes(query.toLowerCase());
+            });
+
+            appState.searchResults = results;
+            renderSearchResults();
+        }
+
+        // Renderizar resultados de búsqueda mejorados
+        function renderSearchResults() {
+            const container = document.getElementById('searchResults');
+
+            if (appState.searchResults.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <span class="material-icons text-4xl mb-2">search_off</span>
+                        <p>No se encontraron productos para "${appState.searchQuery}"</p>
+                        <p class="text-sm mt-2">Intenta con otros términos o revisa la ortografía</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = appState.searchResults.map(product => {
+                const hasVariants = product.variantes && product.variantes.length > 0;
+                const showPrices = appState.storeConfig?.mostrar_precios !== false;
+
+                return `
+                    <div class="search-result-item p-3 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 cursor-pointer transition-colors slide-up" data-product-id="${product.id}">
+                        <div class="flex space-x-3">
+                            <div class="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
+                                ${product.imagen_principal ?
+                        `<img src="${product.imagen_principal}" alt="${product.nombre}" class="w-full h-full object-cover" loading="lazy">` :
+                        `<div class="w-full h-full flex items-center justify-center text-gray-400">
+                                        <span class="material-icons">image</span>
+                                    </div>`
+                    }
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-medium text-gray-900 truncate">${product.nombre}</h3>
+                                <p class="text-gray-600 text-sm truncate">${product.descripcion || 'Sin descripción'}</p>
+                                <div class="flex justify-between items-center mt-1">
+                                    ${showPrices ?
+                        `<span class="font-bold text-primary">${(product.precio_base || 0).toFixed(2)}</span>` :
+                        '<div></div>'
+                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Agregar event listeners a los resultados
+            container.querySelectorAll('.search-result-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const productId = parseInt(item.dataset.productId);
+                    closeSearch();
+                    openProductModal(productId);
+                });
+            });
+        }
+
+        // Abrir modal de producto mejorado
+        function openProductModal(productId) {
+            const product = appState.products.find(p => p.id === productId);
+            if (!product) return;
+
+            appState.selectedProduct = product;
+            appState.isProductOpen = true;
+
+            // Renderizar contenido del producto
+            renderProductModal();
+
+            // Mostrar modal
+            document.getElementById('productModal').classList.remove('translate-y-full');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Renderizar modal de producto mejorado
+        function renderProductModal() {
+            const product = appState.selectedProduct;
+            const container = document.getElementById('productContent');
+            const hasVariants = product.variantes && product.variantes.length > 0;
+            const showPrices = appState.storeConfig?.mostrar_precios !== false;
+            const showImages = appState.storeConfig?.mostrar_imagenes_productos !== false;
+
+            container.innerHTML = `
+                <div class="space-y-6">
+                    <!-- Imágenes del producto mejoradas -->
+                    ${showImages ? `
+                        <div class="bg-gray-100 rounded-lg overflow-hidden">
+                            ${product.imagen_principal ?
+                        `<img src="${product.imagen_principal}" alt="${product.nombre}" class="w-full h-64 object-cover" loading="lazy">` :
+                        `<div class="w-full h-64 flex items-center justify-center text-gray-400">
+                                    <span class="material-icons text-6xl">image</span>
+                                </div>`
+                    }
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Información básica mejorada -->
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 mb-2">${product.nombre}</h1>
+                        <p class="text-gray-600 mb-4">${product.descripcion || 'Sin descripción'}</p>
+                        <div class="flex items-center justify-between">
+                            ${showPrices ? `
+                                <div>
+                                    <span class="text-3xl font-bold text-primary">${(product.precio_base || 0).toFixed(2)}</span>
+                                </div>
+                            ` : '<div></div>'}
+                            ${hasVariants ?
+                    `<span class="text-sm text-gray-500">Precio base</span>` :
+                    ``
+                }
+                        </div>
+                    </div>
+                    
+                    <!-- Variantes (si las hay) mejoradas -->
+                    ${hasVariants ? `
+                        <div class="variants-section">
+                            <h3 class="font-medium text-gray-900 mb-3">Selecciona una opción:</h3>
+                            <div class="grid grid-cols-2 gap-2" id="variantOptions">
+                                ${product.variantes.map(variant => `
+                                    <button class="variant-option p-3 border rounded-lg text-left transition-colors focus-visible hover:border-primary" 
+                                            data-variant-id="${variant.id}" 
+                                            aria-label="Seleccionar ${variant.nombre}">
+                                        <div class="font-medium">${variant.nombre}</div>
+                                        ${showPrices ? `
+                                            <div class="text-sm text-gray-600">
+                                                ${(variant.precio_extra || 0) > 0 ? `+${variant.precio_extra.toFixed(2)}` : 'Sin costo adicional'}
+                                            </div>
+                                        ` : ''}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- Selector de cantidad y botón de agregar mejorados -->
+                    <div class="sticky bottom-0 bg-white pt-4 border-t border-gray-200">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <span class="font-medium">Cantidad:</span>
+                            <div class="quantity-selector flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                                <button class="decrease-btn w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 transition-colors focus-visible" onclick="changeQuantity(-1)" aria-label="Reducir cantidad">
+                                    <span class="material-icons text-lg">remove</span>
+                                </button>
+                                <input type="number" id="productQuantity" class="w-12 h-10 text-center border-x border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" value="1" min="1" aria-label="Cantidad">
+                                <button class="increase-btn w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 transition-colors focus-visible" onclick="changeQuantity(1)" aria-label="Aumentar cantidad">
+                                    <span class="material-icons text-lg">add</span>
+                                </button>
+                            </div>
+                        </div>
+                        <button id="addToCartButton" class="w-full color-primary text-white py-3 rounded-lg font-medium hover:opacity-90 transition-opacity focus-visible" aria-label="Agregar al carrito">
+                            ${hasVariants ? 'Selecciona una opción' : 'Agregar al carrito'}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Configurar variantes si las hay
+            if (hasVariants) {
+                setupVariantSelection();
+            } else {
+                // Configurar evento del botón de agregar
+                document.getElementById('addToCartButton').addEventListener('click', () => {
+                    addToCart(appState.selectedProduct.id);
+                });
+            }
+
+            // Configurar validación de cantidad
+            document.getElementById('productQuantity').addEventListener('change', validateQuantity);
+        }
+
+        // Configurar selección de variantes mejorada
+        function setupVariantSelection() {
+            const variantButtons = document.querySelectorAll('.variant-option');
+            const addButton = document.getElementById('addToCartButton');
+            let selectedVariant = null;
+
+            variantButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Deseleccionar todos
+                    variantButtons.forEach(b => {
+                        b.classList.remove('border-primary', 'bg-blue-50');
+                        b.setAttribute('aria-selected', 'false');
+                    });
+
+                    // Seleccionar este
+                    button.classList.add('border-primary', 'bg-blue-50');
+                    button.setAttribute('aria-selected', 'true');
+                    selectedVariant = parseInt(button.dataset.variantId);
+
+                    // Habilitar botón de agregar
+                    addButton.disabled = false;
+                    addButton.textContent = 'Agregar al carrito';
+                });
+            });
+
+            // Configurar evento del botón de agregar
+            addButton.addEventListener('click', () => {
+                if (selectedVariant) {
+                    addToCart(appState.selectedProduct.id, selectedVariant);
+                }
+            });
+        }
+
+        // Cambiar cantidad en el modal de producto mejorado
+        function changeQuantity(delta) {
+            const input = document.getElementById('productQuantity');
+            let newValue = parseInt(input.value) + delta;
+
+            if (newValue < 1) newValue = 1;
+
+            input.value = newValue;
+        }
+
+        // Validar cantidad mejorada
+        function validateQuantity() {
+            const input = document.getElementById('productQuantity');
+            let value = parseInt(input.value);
+
+            if (isNaN(value) || value < 1) value = 1;
+
+            input.value = value;
+        }
+
+        // Cerrar modal de producto mejorado
+        function closeProduct() {
+            appState.isProductOpen = false;
+            document.getElementById('productModal').classList.add('translate-y-full');
+            document.body.style.overflow = '';
+        }
+
+        // Abrir menú lateral mejorado
+        function openMenu() {
+            console.log('Abriendo menú');
+            appState.isMenuOpen = true;
+            const menuElement = document.getElementById('sideMenu');
+            const menuContent = menuElement.querySelector('.bg-white');
+
+            menuElement.classList.remove('hidden');
+            setTimeout(() => {
+                menuContent.classList.remove('-translate-x-full');
+            }, 10);
+
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Cerrar menú lateral mejorado - VERSIÓN CORREGIDA
+        function closeMenu() {
+            console.log('Cerrando menú');
+            appState.isMenuOpen = false;
+            const menuElement = document.getElementById('sideMenu');
+            const menuContent = menuElement.querySelector('.bg-white');
+
+            menuContent.classList.add('-translate-x-full');
+            setTimeout(() => {
+                menuElement.classList.add('hidden');
+            }, 300);
+
+            document.body.style.overflow = '';
+        }
+
+        // Abrir carrito mejorado - VERSIÓN CORREGIDA
+        function openCart() {
+            console.log('Abriendo carrito');
+            appState.isCartOpen = true;
+            const cartModal = document.getElementById('cartModal');
+            const cartContent = cartModal.querySelector('.bg-white');
+
+            cartModal.classList.remove('hidden');
+            setTimeout(() => {
+                cartContent.classList.remove('translate-y-full');
+            }, 10);
+
+            document.body.style.overflow = 'hidden';
+            renderCart();
+        }
+
+        // Cerrar carrito mejorado - VERSIÓN CORREGIDA
+        function closeCart() {
+            console.log('Cerrando carrito');
+            appState.isCartOpen = false;
+            const cartModal = document.getElementById('cartModal');
+            const cartContent = cartModal.querySelector('.bg-white');
+
+            cartContent.classList.add('translate-y-full');
+            setTimeout(() => {
+                cartModal.classList.add('hidden');
+            }, 300);
+
+            document.body.style.overflow = '';
+        }
+        // Renderizar carrito mejorado
+        function renderCart() {
+            const container = document.getElementById('cartContent');
+            const footer = document.getElementById('cartFooter');
+
+            if (appState.cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <span class="material-icons text-4xl mb-2">shopping_cart</span>
+                        <p class="font-medium">Tu carrito está vacío</p>
+                        <p class="text-sm">Agrega productos para comenzar tu pedido</p>
+                        <button class="mt-4 px-4 py-2 color-primary text-white rounded-lg hover:opacity-90 transition-opacity focus-visible" onclick="closeCart()">
+                            Seguir comprando
+                        </button>
+                    </div>
+                `;
+                footer.classList.add('hidden');
+                return;
+            }
+
+            let subtotal = 0;
+            container.innerHTML = appState.cart.map(item => {
+                const product = appState.products.find(p => p.id === item.producto_id);
+                const variant = product?.variantes ? product.variantes.find(v => v.id === item.variante_id) : null;
+                const price = variant ? (product.precio_base || 0) + (variant.precio_extra || 0) : (product?.precio_base || 0);
+                const itemSubtotal = price * item.cantidad;
+                subtotal += itemSubtotal;
+
+                return `
+                    <div class="cart-item p-3 border-b border-gray-200 last:border-b-0 cart-item-enter slide-up">
+                        <div class="flex space-x-3">
+                            <div class="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
+                                ${product?.imagen_principal ?
+                        `<img src="${product.imagen_principal}" alt="${product.nombre}" class="w-full h-full object-cover" loading="lazy">` :
+                        `<div class="w-full h-full flex items-center justify-center text-gray-400">
+                                        <span class="material-icons">image</span>
+                                    </div>`
+                    }
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-medium text-gray-900 truncate">${product?.nombre || 'Producto no encontrado'}</h3>
+                                ${variant ? `<p class="text-sm text-gray-600 truncate">${variant.nombre}</p>` : ''}
+                                ${appState.storeConfig?.mostrar_precios !== false ?
+                        `<p class="font-bold text-primary">${price.toFixed(2)}</p>` :
+                        ''
+                    }
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="quantity-btn w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors focus-visible" onclick="updateCartItemQuantity(${item.producto_id}, ${item.variante_id || null}, -1)" aria-label="Reducir cantidad">
+                                    <span class="material-icons text-sm">remove</span>
+                                </button>
+                                <span class="w-8 text-center font-medium">${item.cantidad}</span>
+                                <button class="quantity-btn w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors focus-visible" onclick="updateCartItemQuantity(${item.producto_id}, ${item.variante_id || null}, 1)" aria-label="Aumentar cantidad">
+                                    <span class="material-icons text-sm">add</span>
+                                </button>
+                                <button class="delete-btn w-8 h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center transition-colors focus-visible" onclick="removeCartItem(${item.producto_id}, ${item.variante_id || null})" aria-label="Eliminar producto">
+                                    <span class="material-icons text-sm text-red-600">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Calcular envío
+            const shippingCost = calculateShipping(subtotal);
+            const total = subtotal + shippingCost;
+
+            // Actualizar totales
+            if (appState.storeConfig?.mostrar_precios !== false) {
+                document.getElementById('cartSubtotal').textContent = `${subtotal.toFixed(2)}`;
+                document.getElementById('shippingCost').textContent = shippingCost === 0 ? 'Gratis' : `${shippingCost.toFixed(2)}`;
+                document.getElementById('cartTotal').textContent = `${total.toFixed(2)}`;
+
+                // Mostrar mensaje de envío gratis si aplica
+                if (shippingCost === 0 && subtotal > 0) {
+                    document.getElementById('shippingCost').innerHTML = 'Gratis <span class="text-green-600 ml-1">✓</span>';
+                }
+            } else {
+                // Ocultar precios si está configurado así
+                document.getElementById('cartSubtotal').textContent = '-';
+                document.getElementById('shippingCost').textContent = '-';
+                document.getElementById('cartTotal').textContent = '-';
+            }
+
+            footer.classList.remove('hidden');
+        }
+
+        // Calcular costo de envío
+        function calculateShipping(subtotal) {
+            const config = appState.storeConfig;
+            if (!config || !config.delivery_disponible) {
+                return 0;
+            }
+
+            const deliveryCost = config.costo_delivery || 0;
+            const minimumOrder = config.pedido_minimo || 0;
+
+            // Si hay un mínimo de pedido y se alcanza, envío gratis
+            if (minimumOrder > 0 && subtotal >= minimumOrder) {
+                return 0;
+            }
+
+            return deliveryCost;
+        }
+
+        // Agregar producto al carrito mejorado
+        function addToCart(productId, variantId = null) {
+            const product = appState.products.find(p => p.id === productId);
+            if (!product) return;
+
+            // Obtener cantidad del modal
+            const quantity = parseInt(document.getElementById('productQuantity')?.value) || 1;
+
+            // Verificar si ya existe en el carrito
+            if (variantId) {
+                const existingItem = appState.cart.find(item =>
+                    item.producto_id === productId && item.variante_id === variantId
+                );
+
+                if (existingItem) {
+                    existingItem.cantidad += quantity;
+                } else {
+                    appState.cart.push({
+                        producto_id: productId,
+                        variante_id: variantId,
+                        producto_nombre: product.nombre,
+                        variante_nombre: variant.nombre,
+                        precio_unitario: (product.precio_base || 0) + (variant.precio_extra || 0),
+                        cantidad: quantity,
+                        imagen: product.imagen_principal
+                    });
+                }
+            } else {
+                const existingItem = appState.cart.find(item =>
+                    item.producto_id === productId && !item.variante_id
+                );
+
+                if (existingItem) {
+                    existingItem.cantidad += quantity;
+                } else {
+                    appState.cart.push({
+                        producto_id: productId,
+                        variante_id: null,
+                        producto_nombre: product.nombre,
+                        precio_unitario: product.precio_base || 0,
+                        cantidad: quantity,
+                        imagen: product.imagen_principal
+                    });
+                }
+            }
+
+            // Guardar en localStorage con token específico
+            storage.set(`cart_${appState.token}`, appState.cart);
+
+            // Actualizar UI
+            updateCartUI();
+
+            // Mostrar notificación
+            showNotification('Producto agregado al carrito');
+
+            // Cerrar modal de producto si está abierto
+            if (appState.isProductOpen) {
+                closeProduct();
+            }
+        }
+
+        // Actualizar cantidad de item en el carrito mejorado
+        function updateCartItemQuantity(productId, variantId, change) {
+            const item = appState.cart.find(item =>
+                item.producto_id === productId && item.variante_id === variantId
+            );
+
+            if (!item) return;
+
+            const newQuantity = item.cantidad + change;
+
+            if (newQuantity <= 0) {
+                // Eliminar item
+                removeCartItem(productId, variantId);
+                return;
+            } else {
+                item.cantidad = newQuantity;
+            }
+
+            // Guardar en localStorage
+            storage.set(`cart_${appState.token}`, appState.cart);
+
+            // Actualizar UI
+            updateCartUI();
+            if (appState.isCartOpen) {
+                renderCart();
+            }
+        }
+
+        // Eliminar item del carrito
+        function removeCartItem(productId, variantId) {
+            appState.cart = appState.cart.filter(item =>
+                !(item.producto_id === productId && item.variante_id === variantId)
+            );
+
+            // Guardar en localStorage
+            storage.set(`cart_${appState.token}`, appState.cart);
+
+            // Actualizar UI
+            updateCartUI();
+            if (appState.isCartOpen) {
+                renderCart();
+            }
+
+            showNotification('Producto eliminado del carrito');
+        }
+
+        // Vaciar carrito
+        function clearCart() {
+            if (appState.cart.length === 0) return;
+
+            if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
+                appState.cart = [];
+                storage.set(`cart_${appState.token}`, []);
+
+                // Actualizar UI
+                updateCartUI();
+                if (appState.isCartOpen) {
+                    renderCart();
+                }
+
+                showNotification('Carrito vaciado');
+            }
+        }
+
+        // Actualizar UI del carrito mejorado
+        function updateCartUI() {
+            const totalItems = appState.cart.reduce((sum, item) => sum + item.cantidad, 0);
+            const badge = document.getElementById('cartBadge');
+            const fabBadge = document.getElementById('cartFabBadge');
+            const fab = document.getElementById('cartFab');
+
+            if (totalItems > 0) {
+                badge.textContent = totalItems > 99 ? '99+' : totalItems;
+                badge.classList.remove('hidden');
+
+                fabBadge.textContent = totalItems > 99 ? '99+' : totalItems;
+                fabBadge.classList.remove('hidden');
+
+                fab.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+                fabBadge.classList.add('hidden');
+                fab.classList.add('hidden');
+            }
+        }
+
+
+
+
+
+
+        // Finalizar compra mejorada
+        function checkout() {
+            if (appState.cart.length === 0) return;
+
+            const config = appState.storeConfig;
+            if (!config) {
+                showNotification('Error en la configuración de la tienda', 'error');
+                return;
+            }
+
+            // Validar pedido mínimo
+            if (config.pedido_minimo > 0) {
+                const subtotal = calculateSubtotal();
+
+                if (subtotal < config.pedido_minimo) {
+                    showNotification(`El pedido mínimo es de ${config.pedido_minimo}`, 'warning');
+                    return;
+                }
+            }
+
+            // Mostrar formulario de datos del cliente
+            showCustomerDataForm();
+        }
+
+
+
+
+        // Calcular subtotal
+        function calculateSubtotal() {
+            return appState.cart.reduce((sum, item) => {
+                const product = appState.products.find(p => p.id === item.producto_id);
+                const variant = product?.variantes ? product.variantes.find(v => v.id === item.variante_id) : null;
+                const price = variant ? (product.precio_base || 0) + (variant.precio_extra || 0) : (product?.precio_base || 0);
+                return sum + (price * item.cantidad);
+            }, 0);
+        }
+
+        // Mostrar formulario de datos del cliente
+        function showCustomerDataForm() {
+            // Cerrar carrito primero
+            if (appState.isCartOpen) {
+                closeCart();
+            }
+
+            // Crear y mostrar modal de checkout
+            const checkoutModal = document.getElementById('checkoutModal');
+            if (!checkoutModal) {
+                createCheckoutModal();
+            }
+
+            renderCheckoutForm();
+
+            // Mostrar modal
+            document.getElementById('checkoutModal').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('checkoutModal').querySelector('.bg-white').classList.remove('translate-y-full');
+            }, 10);
+
+            document.body.style.overflow = 'hidden';
+            appState.isCheckoutOpen = true;
+        }
+
+        // Crear modal de checkout dinámicamente
+        function createCheckoutModal() {
+            const modalHTML = `
+        <div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+            <div class="fixed inset-x-0 bottom-0 bg-white rounded-t-xl transform translate-y-full transition-transform duration-300 ease-out max-h-[90vh] overflow-y-auto">
+                <!-- Header del modal -->
+                <div class="sticky top-0 bg-white border-b border-gray-200 px-4 py-3">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-lg font-semibold text-gray-900">Datos de entrega</h2>
+                        <button id="closeCheckout" class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                            <span class="material-icons text-gray-600">close</span>
+                        </button>
+                    </div>
+                    <!-- Barra de progreso -->
+                    <div class="mt-2 w-full bg-gray-200 rounded-full h-1">
+                        <div class="bg-primary h-1 rounded-full transition-all duration-300" style="width: 50%"></div>
+                    </div>
+                </div>
+
+                <!-- Contenido del formulario -->
+                <div id="checkoutContent" class="p-4">
+                    <!-- Aquí se renderizará el formulario -->
+                </div>
+            </div>
+        </div>
+    `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            // Agregar event listener para cerrar
+            document.getElementById('closeCheckout').addEventListener('click', closeCheckout);
+
+            // Cerrar al hacer click en el overlay
+            document.getElementById('checkoutModal').addEventListener('click', (e) => {
+                if (e.target.id === 'checkoutModal') {
+                    closeCheckout();
+                }
+            });
+        }
+
+        // Renderizar formulario de checkout
+        function renderCheckoutForm() {
+            const container = document.getElementById('checkoutContent');
+            const config = appState.storeConfig;
+            const subtotal = calculateSubtotal();
+            const shipping = calculateShipping(subtotal);
+            const total = subtotal + shipping;
+
+            container.innerHTML = `
+        <form id="checkoutForm" class="space-y-6">
+            <!-- Resumen del pedido -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="font-medium text-gray-900 mb-3">Resumen del pedido</h3>
+                <div class="space-y-2 text-sm">
+                    ${appState.cart.map(item => {
+                const product = appState.products.find(p => p.id === item.producto_id);
+                const variant = product?.variantes ? product.variantes.find(v => v.id === item.variante_id) : null;
+                const price = variant ? (product.precio_base || 0) + (variant.precio_extra || 0) : (product?.precio_base || 0);
+
+                return `
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">
+                                    ${product?.nombre || 'Producto'}${variant ? ` (${variant.nombre})` : ''} x${item.cantidad}
+                                </span>
+                                <span class="font-medium">${(price * item.cantidad).toFixed(2)}</span>
+                            </div>
+                        `;
+            }).join('')}
+                    <div class="border-t border-gray-300 pt-2 mt-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Subtotal:</span>
+                            <span class="font-medium">${subtotal.toFixed(2)}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Envío:</span>
+                            <span class="font-medium">${shipping === 0 ? 'Gratis' : shipping.toFixed(2)}</span>
+                        </div>
+                        <div class="flex justify-between text-lg font-bold">
+                            <span>Total:</span>
+                            <span class="text-primary">${total.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datos personales -->
+            <div>
+                <h3 class="font-medium text-gray-900 mb-4">Datos personales</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="customerName" class="block text-sm font-medium text-gray-700 mb-1">
+                            Nombre completo <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="customerName" 
+                            name="customerName"
+                            required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                            placeholder="Ingresa tu nombre completo"
+                        >
+                    </div>
+
+                    <div>
+                        <label for="customerPhone" class="block text-sm font-medium text-gray-700 mb-1">
+                            Teléfono <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="customerPhone" 
+                            name="customerPhone"
+                            required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                            placeholder="Ej: +57 300 123 4567"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modalidad de entrega -->
+            ${(config.delivery_disponible || config.pickup_disponible) ? `
+                <div>
+                    <h3 class="font-medium text-gray-900 mb-4">Modalidad de entrega</h3>
+                    <div class="space-y-2">
+                        ${config.delivery_disponible ? `
+                            <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                                <input 
+                                    type="radio" 
+                                    name="deliveryMethod" 
+                                    value="delivery"
+                                    class="mr-3 text-primary focus:ring-primary"
+                                    ${!config.pickup_disponible ? 'checked' : ''}
+                                    onchange="toggleAddressField(this.checked)"
+                                >
+                                <div class="flex-1">
+                                    <span class="font-medium">Delivery</span>
+                                    ${config.costo_delivery > 0 ? `<span class="text-sm text-gray-600 ml-2">(+${config.costo_delivery})</span>` : ''}
+                                    ${config.tiempo_preparacion_min ? `<p class="text-sm text-gray-500">Tiempo estimado: ${config.tiempo_preparacion_min} min</p>` : ''}
+                                </div>
+                            </label>
+                        ` : ''}
+                        
+                        ${config.pickup_disponible ? `
+                            <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                                <input 
+                                    type="radio" 
+                                    name="deliveryMethod" 
+                                    value="pickup"
+                                    class="mr-3 text-primary focus:ring-primary"
+                                    ${!config.delivery_disponible ? 'checked' : ''}
+                                    onchange="toggleAddressField(!this.checked)"
+                                >
+                                <div class="flex-1">
+                                    <span class="font-medium">Retiro en local</span>
+                                    ${config.tiempo_preparacion_min ? `<p class="text-sm text-gray-500">Tiempo de preparación: ${config.tiempo_preparacion_min} min</p>` : ''}
+                                </div>
+                            </label>
+                        ` : ''}
+                    </div>
+                </div>
+            ` : ''}
+
+            <!-- Dirección (solo para delivery) -->
+            <div id="addressField" class="${!config.delivery_disponible || config.pickup_disponible ? 'hidden' : ''}">
+                <label for="customerAddress" class="block text-sm font-medium text-gray-700 mb-1">
+                    Dirección de entrega <span class="text-red-500">*</span>
+                </label>
+                <textarea 
+                    id="customerAddress" 
+                    name="customerAddress"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                    placeholder="Ingresa tu dirección completa con referencias"
+                ></textarea>
+            </div>
+
+            <!-- Método de pago -->
+            <div>
+                <h3 class="font-medium text-gray-900 mb-4">Método de pago</h3>
+                <div class="space-y-2">
+                    <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                        <input 
+                            type="radio" 
+                            name="paymentMethod" 
+                            value="efectivo"
+                            class="mr-3 text-primary focus:ring-primary"
+                            checked
+                        >
+                        <span class="font-medium">Efectivo</span>
+                    </label>
+                    <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                        <input 
+                            type="radio" 
+                            name="paymentMethod" 
+                            value="tarjeta"
+                            class="mr-3 text-primary focus:ring-primary"
+                        >
+                        <span class="font-medium">Tarjeta</span>
+                    </label>
+                    <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                        <input 
+                            type="radio" 
+                            name="paymentMethod" 
+                            value="transferencia"
+                            class="mr-3 text-primary focus:ring-primary"
+                        >
+                        <span class="font-medium">Transferencia</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Notas adicionales -->
+            <div>
+                <label for="orderNotes" class="block text-sm font-medium text-gray-700 mb-1">
+                    Notas adicionales (opcional)
+                </label>
+                <textarea 
+                    id="orderNotes" 
+                    name="orderNotes"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                    placeholder="Indica alguna preferencia especial para tu pedido"
+                ></textarea>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="sticky bottom-0 bg-white pt-4 border-t border-gray-200">
+                <button 
+                    type="submit" 
+                    class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                    id="submitOrder"
+                >
+                    Confirmar pedido
+                </button>
+                <p class="text-xs text-gray-500 text-center mt-2">
+                    Al confirmar aceptas nuestros términos y condiciones
+                </p>
+            </div>
+        </form>
+    `;
+
+            // Configurar event listener del formulario
+            document.getElementById('checkoutForm').addEventListener('submit', handleCheckoutSubmit);
+        }
+
+        // Alternar campo de dirección
+        function toggleAddressField(showAddress) {
+            const addressField = document.getElementById('addressField');
+            const addressInput = document.getElementById('customerAddress');
+
+            if (showAddress) {
+                addressField.classList.remove('hidden');
+                addressInput.required = true;
+            } else {
+                addressField.classList.add('hidden');
+                addressInput.required = false;
+                addressInput.value = '';
+            }
+        }
+
+        // Manejar envío del formulario
+        async function handleCheckoutSubmit(e) {
+            e.preventDefault();
+
+            const submitButton = document.getElementById('submitOrder');
+            const formData = new FormData(e.target);
+
+            // Validar campos requeridos
+            const nombre = formData.get('customerName')?.trim();
+            const telefono = formData.get('customerPhone')?.trim();
+            const metodoEntrega = formData.get('deliveryMethod') || 'pickup';
+            const direccion = metodoEntrega === 'delivery' ? formData.get('customerAddress')?.trim() : '';
+            const metodoPago = formData.get('paymentMethod') || 'efectivo';
+            const notas = formData.get('orderNotes')?.trim() || '';
+
+            if (!nombre || !telefono) {
+                showNotification('Por favor completa todos los campos requeridos', 'error');
+                return;
+            }
+
+            if (metodoEntrega === 'delivery' && !direccion) {
+                showNotification('Por favor ingresa tu dirección de entrega', 'error');
+                return;
+            }
+
+            // Deshabilitar botón y mostrar loading
+            submitButton.disabled = true;
+            submitButton.innerHTML = `
+        <span class="flex items-center justify-center">
+            <span class="material-icons animate-spin mr-2">refresh</span>
+            Procesando...
+        </span>
+    `;
+
+            try {
+                // Preparar datos para la API
+                const orderData = {
+                    tienda_id: appState.store.id,
+                    cliente_nombre: nombre,
+                    cliente_telefono: telefono,
+                    cliente_direccion: direccion || null,
+                    metodo_entrega: metodoEntrega,
+                    metodo_pago: metodoPago,
+                    notas: notas || null,
+                    items: appState.cart.map(item => {
+                        const product = appState.products.find(p => p.id === item.producto_id);
+                        const variant = product?.variantes ? product.variantes.find(v => v.id === item.variante_id) : null;
+                        const precio_unitario = variant ? (product.precio_base || 0) + (variant.precio_extra || 0) : (product?.precio_base || 0);
+
+                        return {
+                            producto_id: item.producto_id,
+                            variante_id: item.variante_id || null,
+                            cantidad: item.cantidad,
+                            precio_unitario: precio_unitario,
+                            notas: null
+                        };
+                    })
+                };
+
+                // Enviar pedido a la API
+                const response = await fetch('/api/ordenes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Error al procesar el pedido');
+                }
+
+                // Pedido creado exitosamente
+                showNotification('¡Pedido creado exitosamente!', 'success');
+
+                // Cerrar modal de checkout
+                closeCheckout();
+
+                // Limpiar carrito
+                appState.cart = [];
+                storage.set(`cart_${appState.token}`, []);
+                updateCartUI();
+
+                // Mostrar modal de confirmación
+                showOrderConfirmation(result);
+
+            } catch (error) {
+                console.error('Error al procesar el pedido:', error);
+                showNotification(error.message || 'Error al procesar el pedido. Intenta nuevamente.', 'error');
+            } finally {
+                // Rehabilitar botón
+                submitButton.disabled = false;
+                submitButton.textContent = 'Confirmar pedido';
+            }
+        }
+
+        // Mostrar confirmación del pedido
+        function showOrderConfirmation(orderResult) {
+            const confirmationHTML = `
+        <div id="orderConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg max-w-md w-full p-6 text-center">
+                <div class="mb-4">
+                    <span class="material-icons text-green-500 text-6xl">check_circle</span>
+                </div>
+                <h2 class="text-xl font-bold text-gray-900 mb-2">¡Pedido confirmado!</h2>
+                <p class="text-gray-600 mb-4">
+                    Tu pedido <span class="font-bold">#${orderResult.numero_orden}</span> ha sido recibido correctamente.
+                </p>
+                <p class="text-sm text-gray-500 mb-6">
+                    Recibirás una confirmación por WhatsApp en breve.
+                </p>
+                <div class="space-y-3">
+                    ${orderResult.whatsapp_url ? `
+                        <a href="${orderResult.whatsapp_url}" target="_blank" class="block w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors">
+                            <span class="material-icons text-sm mr-2">chat</span>
+                            Continuar por WhatsApp
+                        </a>
+                    ` : ''}
+                    <button onclick="closeOrderConfirmation()" class="block w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors">
+                        Continuar comprando
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+            document.body.insertAdjacentHTML('beforeend', confirmationHTML);
+        }
+
+        // Cerrar modal de confirmación
+        function closeOrderConfirmation() {
+            const modal = document.getElementById('orderConfirmationModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Cerrar modal de checkout
+        function closeCheckout() {
+            const modal = document.getElementById('checkoutModal');
+            if (!modal) return;
+
+            const content = modal.querySelector('.bg-white');
+            content.classList.add('translate-y-full');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+
+            document.body.style.overflow = '';
+            appState.isCheckoutOpen = false;
+        }
+
+
+
+
+
+
+        // Procesar checkout por WhatsApp
+        function processWhatsAppCheckout() {
+            const config = appState.storeConfig;
+            const store = appState.store;
+
+            let message = `¡Hola! Me gustaría hacer un pedido desde ${store.nombre}:\n\n`;
+
+            let subtotal = 0;
+            appState.cart.forEach((item, index) => {
+                const product = appState.products.find(p => p.id === item.producto_id);
+                const variant = product?.variantes ? product.variantes.find(v => v.id === item.variante_id) : null;
+                const price = variant ? (product.precio_base || 0) + (variant.precio_extra || 0) : (product?.precio_base || 0);
+                const itemTotal = price * item.cantidad;
+                subtotal += itemTotal;
+
+                message += `${index + 1}. ${product?.nombre || 'Producto'}`;
+                if (variant) {
+                    message += ` (${variant.nombre})`;
+                }
+                message += `\n   Cantidad: ${item.cantidad}`;
+                if (config.mostrar_precios !== false) {
+                    message += ` - ${itemTotal.toFixed(2)}`;
+                }
+                message += `\n\n`;
+            });
+
+            if (config.mostrar_precios !== false) {
+                const shipping = calculateShipping(subtotal);
+                const total = subtotal + shipping;
+
+                message += `Subtotal: ${subtotal.toFixed(2)}\n`;
+                message += `Envío: ${shipping === 0 ? 'Gratis' : `${shipping.toFixed(2)}`}\n`;
+                message += `Total: ${total.toFixed(2)}\n\n`;
+            }
+
+            if (config.delivery_disponible && config.pickup_disponible) {
+                message += `Prefiero: [ ] Delivery [ ] Retiro en local\n\n`;
+            } else if (config.delivery_disponible) {
+                message += `Modalidad: Delivery\n\n`;
+            } else if (config.pickup_disponible) {
+                message += `Modalidad: Retiro en local\n\n`;
+            }
+
+            message += `¡Gracias!`;
+
+            const whatsappUrl = `https://wa.me/${config.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+
+            // Mostrar notificación y mantener el carrito
+            showNotification('Redirigiendo a WhatsApp para completar tu pedido', 'info');
+        }
+
+        // Procesar checkout (simulado)
+        function processCheckout() {
+            // Simular procesamiento
+            showNotification('Procesando tu pedido...', 'info');
+
+            // Simular delay de procesamiento
+            setTimeout(() => {
+                // Simular éxito de compra
+                const orderNumber = Math.floor(Math.random() * 1000000);
+
+                // Limpiar carrito
+                appState.cart = [];
+                storage.set(`cart_${appState.token}`, []);
+
+                // Actualizar UI
+                updateCartUI();
+                if (appState.isCartOpen) {
+                    renderCart();
+                    closeCart();
+                }
+
+                showNotification(`¡Pedido #${orderNumber} realizado con éxito!`, 'success');
+            }, 2000);
+        }
+
+        // Compartir tienda
+        function shareStore() {
+            if (navigator.share) {
+                navigator.share({
+                    title: appState.store.nombre,
+                    text: appState.store.descripcion,
+                    url: window.location.href
+                })
+                    .then(() => console.log('Compartido con éxito'))
+                    .catch((error) => console.log('Error al compartir', error));
+            } else {
+                // Fallback para navegadores que no soportan Web Share API
+                navigator.clipboard.writeText(window.location.href)
+                    .then(() => showNotification('Enlace copiado al portapapeles'))
+                    .catch(() => {
+                        // Fallback más básico
+                        prompt('Comparte este enlace:', window.location.href);
+                    });
+            }
+        }
+
+        // Contactar por WhatsApp
+        function contactWhatsApp() {
+            const config = appState.storeConfig;
+            const store = appState.store;
+            const phone = config?.whatsapp || store?.whatsapp || store?.telefono;
+
+            if (!phone) {
+                showNotification('Número de contacto no disponible', 'error');
+                return;
+            }
+
+            const message = `Hola, me interesa conocer más sobre los productos de ${store.nombre}`;
+            const url = `https://wa.me/${phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        // Mostrar notificación mejorada
+        function showNotification(message, type = 'success') {
+            const snackbar = document.getElementById('snackbar');
+            const icon = document.getElementById('snackbarIcon');
+            const messageEl = document.getElementById('snackbarMessage');
+
+            // Configurar icono y color según el tipo
+            let iconName = 'check_circle';
+            let bgColor = 'bg-gray-800';
+
+            switch (type) {
+                case 'error':
+                    iconName = 'error';
+                    bgColor = 'bg-red-600';
+                    break;
+                case 'warning':
+                    iconName = 'warning';
+                    bgColor = 'bg-yellow-600';
+                    break;
+                case 'info':
+                    iconName = 'info';
+                    bgColor = 'bg-blue-600';
+                    break;
+                case 'success':
+                default:
+                    iconName = 'check_circle';
+                    bgColor = 'bg-green-600';
+            }
+
+            // Actualizar contenido
+            icon.textContent = iconName;
+            messageEl.textContent = message;
+            snackbar.className = `fixed bottom-4 left-1/2 transform -translate-x-1/2 ${bgColor} text-white px-4 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 opacity-0 pointer-events-none will-change-transform`;
+
+            // Mostrar
+            setTimeout(() => {
+                snackbar.classList.remove('opacity-0');
+                snackbar.classList.add('opacity-100');
+            }, 100);
+
+            // Ocultar después de 3 segundos (o 5 para errores)
+            const hideDelay = type === 'error' ? 5000 : 3000;
+            setTimeout(() => {
+                snackbar.classList.remove('opacity-100');
+                snackbar.classList.add('opacity-0');
+            }, hideDelay);
+        }
+
+        // Inicializar la aplicación cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', initApp);
+
+        // Mejora: Prevenir zoom en dispositivos móviles con doble tap (opcional)
+        document.addEventListener('touchstart', function (event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        });
+
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Función global para establecer sugerencias (necesaria para onclick)
+        window.setSearchSuggestion = setSearchSuggestion;
+        window.changeQuantity = changeQuantity;
+        window.addToCart = addToCart;
+        window.updateCartItemQuantity = updateCartItemQuantity;
+        window.removeCartItem = removeCartItem;
+        window.closeCart = closeCart;
+
+        // Performance: Intersection Observer para lazy loading mejorado
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if (img.dataset.src) {
+                            img.src = img.dataset.src;
+                            img.removeAttribute('data-src');
+                            observer.unobserve(img);
+                        }
+                    }
+                });
+            }, {
+                rootMargin: '50px 0px',
+                threshold: 0.01
+            });
+
+            // Aplicar lazy loading a imágenes cuando se rendericen
+            const applyLazyLoading = () => {
+                document.querySelectorAll('img[data-src]').forEach(img => {
+                    imageObserver.observe(img);
+                });
+            };
+
+            // Observer para cambios en el DOM
+            const mutationObserver = new MutationObserver(() => {
+                applyLazyLoading();
+            });
+
+            mutationObserver.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+
+        // Service Worker para cache (opcional)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => console.log('SW registered'))
+                    .catch(registrationError => console.log('SW registration failed'));
+            });
+        }
+
+        // Analytics tracking (simulado)
+        function trackEvent(eventName, eventData = {}) {
+            console.log('Analytics Event:', eventName, eventData);
+            // Aquí iría el código real de analytics (Google Analytics, etc.)
+        }
+
+        // Track page view
+        trackEvent('page_view', {
+            store_token: appState.token,
+            page_title: document.title
+        });
+
+        // Agregar funciones globales necesarias
+        window.toggleAddressField = toggleAddressField;
+        window.closeOrderConfirmation = closeOrderConfirmation;
+
+        // Actualizar el estado inicial para incluir checkout
+        appState.isCheckoutOpen = false;
+
+        // Manejar tecla ESC para cerrar checkout
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && appState.isCheckoutOpen) {
+                closeCheckout();
+            }
+        });
+    </script>
+</body>
+
+</html>

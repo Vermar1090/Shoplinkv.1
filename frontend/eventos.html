@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Eventos - ShopLink Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f6f6f6;
+            color: #202122;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .admin-header {
+            background: white;
+            border-bottom: 1px solid #a2a9b1;
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 500;
+            color: #202122;
+        }
+
+        .store-info {
+            font-size: 14px;
+            color: #54595d;
+            margin-top: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            background: white;
+            color: #0645ad;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: #f8f9fa;
+            border-color: #0645ad;
+        }
+
+        .btn-primary {
+            background: #0645ad;
+            color: white;
+            border-color: #0645ad;
+        }
+
+        .btn-primary:hover {
+            background: #0b4096;
+        }
+
+        .btn-success {
+            background: #059669;
+            color: white;
+            border-color: #059669;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn-danger {
+            background: #d73027;
+            color: white;
+            border-color: #d73027;
+        }
+
+        .btn-danger:hover {
+            background: #b71c1c;
+        }
+
+        .btn-warning {
+            background: #f57c00;
+            color: white;
+            border-color: #f57c00;
+        }
+
+        .btn-warning:hover {
+            background: #e65100;
+        }
+
+        /* Main container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Stats section */
+        .stats-section {
+            background: white;
+            border: 1px solid #a2a9b1;
+            border-radius: 4px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #eaecf0;
+            border-radius: 4px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #202122;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #54595d;
+            font-size: 14px;
+        }
+
+        /* Event creation section */
+        .create-section {
+            background: white;
+            border: 1px solid #a2a9b1;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #eaecf0;
+            padding: 20px 25px;
+            border-bottom: 1px solid #a2a9b1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #202122;
+        }
+
+        .section-content {
+            padding: 25px;
+        }
+
+        /* Form styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #202122;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #0645ad;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-help {
+            font-size: 13px;
+            color: #54595d;
+            margin-top: 4px;
+        }
+
+        /* Switch/Toggle */
+        .switch-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #a2a9b1;
+            transition: .4s;
+            border-radius: 12px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #0645ad;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* File upload */
+        .upload-area {
+            border: 2px dashed #a2a9b1;
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #0645ad;
+        }
+
+        .upload-text {
+            color: #54595d;
+            margin-bottom: 5px;
+        }
+
+        .upload-hint {
+            font-size: 13px;
+            color: #a2a9b1;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .image-preview {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #a2a9b1;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #d73027;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Events list */
+        .events-list {
+            background: white;
+            border: 1px solid #a2a9b1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .events-header {
+            background: #eaecf0;
+            padding: 15px 20px;
+            border-bottom: 1px solid #a2a9b1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 6px 10px;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            font-size: 13px;
+        }
+
+        .event-item {
+            border-bottom: 1px solid #eaecf0;
+            padding: 20px;
+            transition: background-color 0.2s;
+        }
+
+        .event-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .event-item:last-child {
+            border-bottom: none;
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .event-info {
+            flex: 1;
+        }
+
+        .event-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #202122;
+            margin-bottom: 5px;
+        }
+
+        .event-meta {
+            font-size: 13px;
+            color: #54595d;
+            margin-bottom: 10px;
+        }
+
+        .event-description {
+            color: #54595d;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: 15px;
+        }
+
+        .event-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-expired {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .event-type {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .type-promocion {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .type-descuento {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .type-evento {
+            background: #fce7f3;
+            color: #be185d;
+        }
+
+        .type-anuncio {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* Event statistics */
+        .event-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eaecf0;
+        }
+
+        .stat {
+            font-size: 13px;
+            color: #54595d;
+        }
+
+        .stat strong {
+            color: #202122;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 4px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #eaecf0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #54595d;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #eaecf0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Loading states */
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #0645ad;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #54595d;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #a2a9b1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .event-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .event-actions {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .event-stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-content">
+            <div>
+                <h1 class="header-title">Gestión de Eventos</h1>
+                <div class="store-info" id="storeInfo">Cargando información...</div>
+            </div>
+            <div class="header-actions">
+                <a href="/dashboard" class="btn">← Volver al Dashboard</a>
+                <a href="/configuracion" class="btn">Configuración</a>
+                <button class="btn btn-primary" id="newEventBtn">+ Crear Evento</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        
+        <!-- Statistics -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalEvents">0</div>
+                    <div class="stat-label">Total Eventos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="activeEvents">0</div>
+                    <div class="stat-label">Eventos Activos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalUses">0</div>
+                    <div class="stat-label">Códigos Usados</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="thisMonth">0</div>
+                    <div class="stat-label">Este Mes</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events List -->
+        <section class="events-list">
+            <div class="events-header">
+                <h2 class="section-title">Eventos y Promociones</h2>
+                <div class="filters">
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">Todos los estados</option>
+                        <option value="active">Activos</option>
+                        <option value="inactive">Inactivos</option>
+                        <option value="expired">Expirados</option>
+                    </select>
+                    <select class="filter-select" id="typeFilter">
+                        <option value="">Todos los tipos</option>
+                        <option value="promocion">Promoción</option>
+                        <option value="descuento">Descuento</option>
+                        <option value="evento">Evento</option>
+                        <option value="anuncio">Anuncio</option>
+                    </select>
+                </div>
+            </div>
+            <div id="eventsList">
+                <!-- Los eventos se cargarán aquí dinámicamente -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal para crear/editar evento -->
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Crear Nuevo Evento</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="eventForm">
+                    <input type="hidden" id="eventId">
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="titulo">Título del Evento *</label>
+                            <input type="text" id="titulo" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="tipo">Tipo de Evento</label>
+                            <select id="tipo" class="form-select">
+                                <option value="promocion">Promoción</option>
+                                <option value="descuento">Descuento</option>
+                                <option value="evento">Evento</option>
+                                <option value="anuncio">Anuncio</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label" for="descripcion">Descripción</label>
+                        <textarea id="descripcion" class="form-textarea" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="fechaInicio">Fecha de Inicio</label>
+                            <input type="date" id="fechaInicio" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="fechaFin">Fecha de Fin</label>
+                            <input type="date" id="fechaFin" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="horaInicio">Hora de Inicio</label>
+                            <input type="time" id="horaInicio" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="horaFin">Hora de Fin</label>
+                            <input type="time" id="horaFin" class="form-input">
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="descuentoPorcentaje">Descuento (%)</label>
+                            <input type="number" id="descuentoPorcentaje" class="form-input" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="descuentoMonto">Descuento Fijo ($)</label>
+                            <input type="number" id="descuentoMonto" class="form-input" min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="codigoDescuento">Código de Descuento</label>
+                            <input type="text" id="codigoDescuento" class="form-input" placeholder="Ej: PROMO2024">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="prioridad">Prioridad (0-10)</label>
+                            <input type="number" id="prioridad" class="form-input" min="0" max="10" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="limiteUso">Límite de Uso Total</label>
+                            <input type="number" id="limiteUso" class="form-input" min="1">
+                            <div class="form-help">Dejar vacío para uso ilimitado</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="limitePorCliente">Límite por Cliente</label>
+                            <input type="number" id="limitePorCliente" class="form-input" min="1" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="colorDestacado">Color Destacado</label>
+                            <input type="color" id="colorDestacado" class="form-input">
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label" for="productosAplicables">Productos Aplicables (IDs separados por coma)</label>
+                        <input type="text" id="productosAplicables" class="form-input" placeholder="1,2,3 o dejar vacío para todos">
+                        <div class="form-help">Dejar vacío para aplicar a todos los productos</div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <div class="switch-group">
+                                <label class="switch">
+                                    <input type="checkbox" id="activo" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <label class="form-label">Evento Activo</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="switch-group">
+                                <label class="switch">
+                                    <input type="checkbox" id="mostrarEnBanner" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <label class="form-label">Mostrar en Banner</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="switch-group">
+                                <label class="switch">
+                                    <input type="checkbox" id="mostrarEnInicio" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <label class="form-label">Mostrar en Inicio</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Imagen Principal</label>
+                        <div class="upload-area" id="imageUpload">
+                            <div class="upload-text">Haz clic o arrastra tu imagen aquí</div>
+                            <div class="upload-hint">PNG, JPG, SVG hasta 5MB</div>
+                        </div>
+                        <input type="file" id="imageFile" class="file-input" accept="image/*">
+                        <div id="imagePreview" class="image-gallery" style="display: none;"></div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Galería de Imágenes</label>
+                        <div class="upload-area" id="galleryUpload">
+                            <div class="upload-text">Selecciona múltiples imágenes</div>
+                            <div class="upload-hint">PNG, JPG hasta 5MB cada una (máximo 10 imágenes)</div>
+                        </div>
+                        <input type="file" id="galleryFiles" class="file-input" accept="image/*" multiple>
+                        <div id="galleryPreview" class="image-gallery"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" id="cancelBtn">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="saveEventBtn">
+                    <span class="btn-text">Guardar Evento</span>
+                    <span class="spinner" style="display: none;"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Variables globales
+        let tiendaId = null;
+        let socket;
+        let events = [];
+        let isLoading = false;
+        let editingEventId = null;
+        let appState = { tiendaId: null };
+        
+        
+        // Cargar tienda del usuario
+        async function loadUserStore() {
+            const userId = localStorage.getItem('userId');
+            
+            if (!userId) {
+                showNotification('No se encontró información del usuario. Redirigiendo...', 'error');
+                setTimeout(() => window.location.href = '/dashboard', 2000);
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/tiendas/por-usuario/${userId}`);
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showNotification('No tienes una tienda registrada', 'error');
+                        setTimeout(() => window.location.href = '/dashboard', 2000);
+                        return;
+                    }
+                    throw new Error('Error al cargar la tienda');
+                }
+
+                const store = await response.json();
+                appState.tiendaId = store.id;
+                tiendaId = store.id;
+                
+                // Almacenar información básica en localStorage para uso posterior
+                localStorage.setItem('tienda_id', store.id);
+                localStorage.setItem('tienda_nombre', store.nombre);
+                
+                // Actualizar información en la interfaz
+                document.getElementById('storeInfo').textContent = 
+                    `${store.nombre} - Gestión de eventos y promociones`;
+                
+                return store;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al cargar los datos de la tienda', 'error');
+                setTimeout(() => window.location.href = '/dashboard', 1500);
+            }
+        }
+        function initSocket() {
+            socket = io();
+            
+            socket.on('connect', () => {
+                console.log('Conectado al servidor');
+                if (tiendaId) {
+                    socket.emit('join-tienda', tiendaId);
+                }
+            });
+            
+            socket.on('nuevo-evento', (data) => {
+                showNotification('Nuevo evento creado', 'success');
+                loadEvents();
+            });
+            
+            socket.on('evento-actualizado', (data) => {
+                showNotification('Evento actualizado', 'info');
+                loadEvents();
+            });
+            
+            socket.on('evento-eliminado', (data) => {
+                showNotification('Evento eliminado', 'info');
+                loadEvents();
+            });
+        }
+
+        // Cargar eventos
+        async function loadEvents() {
+            try {
+                const response = await fetch(`/api/configuracion/eventos/${tiendaId}`);
+                if (!response.ok) throw new Error('Error al cargar eventos');
+                
+                events = await response.json();
+                renderEvents(events);
+                updateStats();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al cargar los eventos', 'error');
+            }
+        }
+
+        // Renderizar eventos
+        function renderEvents(eventsList) {
+            const container = document.getElementById('eventsList');
+            
+            if (eventsList.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📅</div>
+                        <h3>No hay eventos creados</h3>
+                        <p>Crea tu primer evento o promoción para comenzar</p>
+                        <button class="btn btn-primary" onclick="openEventModal()">Crear Evento</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = eventsList.map(event => `
+                <div class="event-item" data-event-id="${event.id}">
+                    <div class="event-header">
+                        <div class="event-info">
+                            <div class="event-title">${event.titulo}</div>
+                            <div class="event-meta">
+                                <span class="event-type type-${event.tipo}">${event.tipo}</span>
+                                <span class="event-status ${getEventStatus(event)}">${getEventStatusText(event)}</span>
+                                ${event.created_at ? `• Creado: ${new Date(event.created_at).toLocaleDateString()}` : ''}
+                            </div>
+                            ${event.descripcion ? `<div class="event-description">${event.descripcion}</div>` : ''}
+                            ${renderEventDetails(event)}
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn btn-primary" onclick="editEvent(${event.id})">Editar</button>
+                            <button class="btn ${event.activo ? 'btn-warning' : 'btn-success'}" onclick="toggleEventStatus(${event.id}, ${event.activo})">
+                                ${event.activo ? 'Desactivar' : 'Activar'}
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteEvent(${event.id}, '${event.titulo}')">Eliminar</button>
+                        </div>
+                    </div>
+                    ${renderEventStats(event)}
+                </div>
+            `).join('');
+        }
+
+        // Obtener estado del evento
+        function getEventStatus(event) {
+            if (!event.activo) return 'status-inactive';
+            
+            const now = new Date();
+            const fechaFin = event.fecha_fin ? new Date(event.fecha_fin) : null;
+            
+            if (fechaFin && fechaFin < now) return 'status-expired';
+            return 'status-active';
+        }
+
+        function getEventStatusText(event) {
+            const status = getEventStatus(event);
+            switch (status) {
+                case 'status-active': return 'Activo';
+                case 'status-inactive': return 'Inactivo';
+                case 'status-expired': return 'Expirado';
+                default: return 'Desconocido';
+            }
+        }
+
+        // Renderizar detalles del evento
+        function renderEventDetails(event) {
+            const details = [];
+            
+            if (event.fecha_inicio || event.fecha_fin) {
+                const inicio = event.fecha_inicio ? new Date(event.fecha_inicio).toLocaleDateString() : 'Sin fecha';
+                const fin = event.fecha_fin ? new Date(event.fecha_fin).toLocaleDateString() : 'Sin fecha';
+                details.push(`📅 ${inicio} - ${fin}`);
+            }
+            
+            if (event.descuento_porcentaje) {
+                details.push(`💯 ${event.descuento_porcentaje}% de descuento`);
+            }
+            
+            if (event.descuento_monto) {
+                details.push(`💰 ${event.descuento_monto} de descuento`);
+            }
+            
+            if (event.codigo_descuento) {
+                details.push(`🏷️ Código: ${event.codigo_descuento}`);
+            }
+            
+            return details.length > 0 ? `<div class="event-meta">${details.join(' • ')}</div>` : '';
+        }
+
+        // Renderizar estadísticas del evento
+        function renderEventStats(event) {
+            return `
+                <div class="event-stats">
+                    <div class="stat">
+                        <strong>Usos:</strong> ${event.usos_actuales || 0}${event.limite_uso ? `/${event.limite_uso}` : ''}
+                    </div>
+                    <div class="stat">
+                        <strong>Prioridad:</strong> ${event.prioridad || 0}
+                    </div>
+                    <div class="stat">
+                        <strong>Banner:</strong> ${event.mostrar_en_banner ? 'Sí' : 'No'}
+                    </div>
+                    <div class="stat">
+                        <strong>Inicio:</strong> ${event.mostrar_en_inicio ? 'Sí' : 'No'}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Actualizar estadísticas
+        function updateStats() {
+            const now = new Date();
+            const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            
+            const totalEvents = events.length;
+            const activeEvents = events.filter(e => e.activo && (!e.fecha_fin || new Date(e.fecha_fin) >= now)).length;
+            const totalUses = events.reduce((sum, e) => sum + (e.usos_actuales || 0), 0);
+            const thisMonthEvents = events.filter(e => new Date(e.created_at) >= thisMonth).length;
+            
+            document.getElementById('totalEvents').textContent = totalEvents;
+            document.getElementById('activeEvents').textContent = activeEvents;
+            document.getElementById('totalUses').textContent = totalUses;
+            document.getElementById('thisMonth').textContent = thisMonthEvents;
+        }
+
+        // Abrir modal para crear/editar evento
+        function openEventModal(eventId = null) {
+            editingEventId = eventId;
+            const modal = document.getElementById('eventModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.getElementById('eventForm');
+            
+            if (eventId) {
+                modalTitle.textContent = 'Editar Evento';
+                loadEventData(eventId);
+            } else {
+                modalTitle.textContent = 'Crear Nuevo Evento';
+                form.reset();
+                document.getElementById('activo').checked = true;
+                document.getElementById('mostrarEnBanner').checked = true;
+                document.getElementById('mostrarEnInicio').checked = true;
+                document.getElementById('limitePorCliente').value = 1;
+                document.getElementById('prioridad').value = 0;
+            }
+            
+            modal.classList.add('active');
+        }
+
+        // Cargar datos del evento para edición
+        async function loadEventData(eventId) {
+            try {
+                const response = await fetch(`/api/configuracion/evento/${eventId}`);
+                if (!response.ok) throw new Error('Error al cargar evento');
+                
+                const event = await response.json();
+                
+                // Poblar formulario
+                document.getElementById('eventId').value = event.id;
+                document.getElementById('titulo').value = event.titulo || '';
+                document.getElementById('tipo').value = event.tipo || 'promocion';
+                document.getElementById('descripcion').value = event.descripcion || '';
+                document.getElementById('fechaInicio').value = event.fecha_inicio || '';
+                document.getElementById('fechaFin').value = event.fecha_fin || '';
+                document.getElementById('horaInicio').value = event.hora_inicio || '';
+                document.getElementById('horaFin').value = event.hora_fin || '';
+                document.getElementById('descuentoPorcentaje').value = event.descuento_porcentaje || '';
+                document.getElementById('descuentoMonto').value = event.descuento_monto || '';
+                document.getElementById('codigoDescuento').value = event.codigo_descuento || '';
+                document.getElementById('prioridad').value = event.prioridad || 0;
+                document.getElementById('limiteUso').value = event.limite_uso || '';
+                document.getElementById('limitePorCliente').value = event.limite_por_cliente || 1;
+                document.getElementById('colorDestacado').value = event.color_destacado || '#0645ad';
+                document.getElementById('productosAplicables').value = event.productos_aplicables || '';
+                document.getElementById('activo').checked = event.activo;
+                document.getElementById('mostrarEnBanner').checked = event.mostrar_en_banner;
+                document.getElementById('mostrarEnInicio').checked = event.mostrar_en_inicio;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al cargar los datos del evento', 'error');
+            }
+        }
+
+        // Cerrar modal
+        function closeEventModal() {
+            document.getElementById('eventModal').classList.remove('active');
+            editingEventId = null;
+        }
+
+        // Guardar evento
+        async function saveEvent() {
+            if (isLoading) return;
+            
+            const form = document.getElementById('eventForm');
+            const formData = new FormData(form);
+            
+            // Agregar archivos si los hay
+            const imageFile = document.getElementById('imageFile').files[0];
+            const galleryFiles = document.getElementById('galleryFiles').files;
+            
+            if (imageFile) {
+                formData.append('imagen_principal', imageFile);
+            }
+            
+            if (galleryFiles.length > 0) {
+                for (let i = 0; i < galleryFiles.length; i++) {
+                    formData.append('imagenes_galeria', galleryFiles[i]);
+                }
+            }
+            
+            // Recopilar datos del formulario
+            const eventData = {
+                tienda_id: tiendaId,
+                titulo: document.getElementById('titulo').value,
+                tipo: document.getElementById('tipo').value,
+                descripcion: document.getElementById('descripcion').value,
+                fecha_inicio: document.getElementById('fechaInicio').value || null,
+                fecha_fin: document.getElementById('fechaFin').value || null,
+                hora_inicio: document.getElementById('horaInicio').value || null,
+                hora_fin: document.getElementById('horaFin').value || null,
+                descuento_porcentaje: parseInt(document.getElementById('descuentoPorcentaje').value) || null,
+                descuento_monto: parseFloat(document.getElementById('descuentoMonto').value) || null,
+                codigo_descuento: document.getElementById('codigoDescuento').value || null,
+                prioridad: parseInt(document.getElementById('prioridad').value) || 0,
+                limite_uso: parseInt(document.getElementById('limiteUso').value) || null,
+                limite_por_cliente: parseInt(document.getElementById('limitePorCliente').value) || 1,
+                color_destacado: document.getElementById('colorDestacado').value || null,
+                productos_aplicables: document.getElementById('productosAplicables').value || null,
+                activo: document.getElementById('activo').checked ? 1 : 0,
+                mostrar_en_banner: document.getElementById('mostrarEnBanner').checked ? 1 : 0,
+                mostrar_en_inicio: document.getElementById('mostrarEnInicio').checked ? 1 : 0
+            };
+            
+            // Agregar datos al FormData
+            for (const [key, value] of Object.entries(eventData)) {
+                formData.append(key, value);
+            }
+            
+            isLoading = true;
+            const saveBtn = document.getElementById('saveEventBtn');
+            const btnText = saveBtn.querySelector('.btn-text');
+            const spinner = saveBtn.querySelector('.spinner');
+            
+            btnText.style.display = 'none';
+            spinner.style.display = 'inline-block';
+            saveBtn.disabled = true;
+            
+            try {
+                const url = editingEventId ? 
+                    `/api/configuracion/evento/${editingEventId}` : 
+                    `/api/configuracion/evento`;
+                
+                const method = editingEventId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    body: formData
+                });
+                
+                if (!response.ok) throw new Error('Error al guardar evento');
+                
+                const result = await response.json();
+                showNotification(
+                    editingEventId ? 'Evento actualizado correctamente' : 'Evento creado correctamente', 
+                    'success'
+                );
+                
+                closeEventModal();
+                loadEvents();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al guardar el evento', 'error');
+            } finally {
+                isLoading = false;
+                btnText.style.display = 'inline';
+                spinner.style.display = 'none';
+                saveBtn.disabled = false;
+            }
+        }
+
+        // Editar evento
+        function editEvent(eventId) {
+            openEventModal(eventId);
+        }
+
+        // Cambiar estado del evento
+        async function toggleEventStatus(eventId, currentStatus) {
+            try {
+                const formData = new FormData();
+                formData.append('activo', currentStatus ? 0 : 1);
+                
+                const response = await fetch(`/api/configuracion/evento/${eventId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                
+                if (!response.ok) throw new Error('Error al actualizar estado');
+                
+                showNotification(
+                    `Evento ${currentStatus ? 'desactivado' : 'activado'} correctamente`, 
+                    'success'
+                );
+                
+                loadEvents();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al actualizar el estado del evento', 'error');
+            }
+        }
+
+        // Eliminar evento
+        async function deleteEvent(eventId, eventTitle) {
+            if (!confirm(`¿Estás seguro de que quieres eliminar el evento "${eventTitle}"?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/configuracion/evento/${eventId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) throw new Error('Error al eliminar evento');
+                
+                showNotification('Evento eliminado correctamente', 'success');
+                loadEvents();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al eliminar el evento', 'error');
+            }
+        }
+
+        // Manejar subida de archivos
+        function setupFileUploads() {
+            // Imagen principal
+            const imageUpload = document.getElementById('imageUpload');
+            const imageFile = document.getElementById('imageFile');
+            
+            imageUpload.addEventListener('click', () => imageFile.click());
+            imageUpload.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                imageUpload.classList.add('dragover');
+            });
+            imageUpload.addEventListener('dragleave', () => {
+                imageUpload.classList.remove('dragover');
+            });
+            imageUpload.addEventListener('drop', (e) => {
+                e.preventDefault();
+                imageUpload.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    imageFile.files = files;
+                    previewImage(files[0], 'imagePreview');
+                }
+            });
+            
+            imageFile.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    previewImage(e.target.files[0], 'imagePreview');
+                }
+            });
+            
+            // Galería
+            const galleryUpload = document.getElementById('galleryUpload');
+            const galleryFiles = document.getElementById('galleryFiles');
+            
+            galleryUpload.addEventListener('click', () => galleryFiles.click());
+            galleryFiles.addEventListener('change', (e) => {
+                previewGallery(e.target.files);
+            });
+        }
+
+        // Vista previa de imagen
+        function previewImage(file, containerId) {
+            const container = document.getElementById(containerId);
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                container.innerHTML = `
+                    <div class="image-preview">
+                        <img src="${e.target.result}" alt="Vista previa">
+                        <button type="button" class="image-remove" onclick="removeImage('${containerId}')">&times;</button>
+                    </div>
+                `;
+                container.style.display = 'grid';
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        // Vista previa de galería
+        function previewGallery(files) {
+            const container = document.getElementById('galleryPreview');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < Math.min(files.length, 10); i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    const preview = document.createElement('div');
+                    preview.className = 'image-preview';
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" alt="Galería ${i + 1}">
+                        <button type="button" class="image-remove" onclick="removeGalleryImage(${i})">&times;</button>
+                    `;
+                    container.appendChild(preview);
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Remover imagen
+        function removeImage(containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            container.style.display = 'none';
+            
+            if (containerId === 'imagePreview') {
+                document.getElementById('imageFile').value = '';
+            }
+        }
+
+        // Remover imagen de galería
+        function removeGalleryImage(index) {
+            const container = document.getElementById('galleryPreview');
+            const previews = container.querySelectorAll('.image-preview');
+            if (previews[index]) {
+                previews[index].remove();
+            }
+            
+            // Resetear el input si no quedan imágenes
+            if (container.children.length === 0) {
+                document.getElementById('galleryFiles').value = '';
+            }
+        }
+
+        // Filtrar eventos
+        function filterEvents() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+            
+            let filteredEvents = events;
+            
+            if (statusFilter) {
+                filteredEvents = filteredEvents.filter(event => {
+                    const status = getEventStatus(event);
+                    switch (statusFilter) {
+                        case 'active':
+                            return status === 'status-active';
+                        case 'inactive':
+                            return status === 'status-inactive';
+                        case 'expired':
+                            return status === 'status-expired';
+                        default:
+                            return true;
+                    }
+                });
+            }
+            
+            if (typeFilter) {
+                filteredEvents = filteredEvents.filter(event => event.tipo === typeFilter);
+            }
+            
+            renderEvents(filteredEvents);
+        }
+
+        // Mostrar notificación
+        function showNotification(message, type = 'info') {
+            const container = document.querySelector('.notifications-container') || createNotificationContainer();
+            
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+                if (container.children.length === 0) {
+                    container.remove();
+                }
+            }, 5000);
+        }
+
+        function createNotificationContainer() {
+            const container = document.createElement('div');
+            container.className = 'notifications-container';
+            document.body.appendChild(container);
+            return container;
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Cargar tienda del usuario primero
+            const store = await loadUserStore();
+            if (!store) return; // Si no se pudo cargar la tienda, ya se manejó el redirect
+            
+            // Inicializar componentes
+            initSocket();
+            setupFileUploads();
+            loadEvents();
+            
+            // Event listeners para botones y modales
+            document.getElementById('newEventBtn').addEventListener('click', () => openEventModal());
+            document.getElementById('closeModal').addEventListener('click', closeEventModal);
+            document.getElementById('cancelBtn').addEventListener('click', closeEventModal);
+            document.getElementById('saveEventBtn').addEventListener('click', saveEvent);
+            
+            // Filtros
+            document.getElementById('statusFilter').addEventListener('change', filterEvents);
+            document.getElementById('typeFilter').addEventListener('change', filterEvents);
+            
+            // Cerrar modal al hacer clic fuera
+            document.getElementById('eventModal').addEventListener('click', (e) => {
+                if (e.target.id === 'eventModal') {
+                    closeEventModal();
+                }
+            });
+        });
+
+        // Actualizar información de la tienda
+        function updateStoreInfo() {
+            const storeName = localStorage.getItem('tienda_nombre') || 'Mi Tienda';
+            document.getElementById('storeInfo').textContent = 
+                `${storeName} - Gestión de eventos y promociones`;
+        }
+
+        // Estilos dinámicos para notificaciones
+        const notificationStyles = `
+            .notifications-container {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 3000;
+            }
+
+            .notification {
+                background: white;
+                border: 1px solid #a2a9b1;
+                border-radius: 4px;
+                padding: 15px 20px;
+                margin-bottom: 10px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                max-width: 350px;
+                animation: slideIn 0.3s ease-out;
+            }
+
+            .notification-success {
+                border-left: 4px solid #059669;
+            }
+
+            .notification-error {
+                border-left: 4px solid #d73027;
+            }
+
+            .notification-info {
+                border-left: 4px solid #0645ad;
+            }
+
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+
+        // Agregar estilos al head
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = notificationStyles;
+        document.head.appendChild(styleSheet);
+
+        // Validaciones del formulario
+        function validateEventForm() {
+            const titulo = document.getElementById('titulo').value.trim();
+            if (!titulo) {
+                showNotification('El título del evento es requerido', 'error');
+                return false;
+            }
+
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+
+            if (fechaInicio && fechaFin && new Date(fechaInicio) > new Date(fechaFin)) {
+                showNotification('La fecha de inicio no puede ser posterior a la fecha de fin', 'error');
+                return false;
+            }
+
+            const descuentoPorcentaje = parseInt(document.getElementById('descuentoPorcentaje').value) || 0;
+            if (descuentoPorcentaje > 100) {
+                showNotification('El descuento porcentual no puede ser mayor a 100%', 'error');
+                return false;
+            }
+
+            const codigoDescuento = document.getElementById('codigoDescuento').value.trim();
+            if (codigoDescuento && codigoDescuento.length < 3) {
+                showNotification('El código de descuento debe tener al menos 3 caracteres', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Actualizar la función saveEvent para incluir validación
+        const originalSaveEvent = saveEvent;
+        saveEvent = async function() {
+            if (!validateEventForm()) {
+                return;
+            }
+            return originalSaveEvent.apply(this, arguments);
+        };
+
+        // Función para generar código automático
+        function generateDiscountCode() {
+            const prefixes = ['PROMO', 'DESC', 'OFERTA', 'SUPER'];
+            const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+            const number = Math.floor(Math.random() * 9999) + 1;
+            const code = `${prefix}${number.toString().padStart(4, '0')}`;
+            
+            document.getElementById('codigoDescuento').value = code;
+            showNotification('Código generado automáticamente', 'info');
+        }
+
+        // Agregar botón para generar código automático
+        document.addEventListener('DOMContentLoaded', () => {
+            const codigoInput = document.getElementById('codigoDescuento');
+            const generateBtn = document.createElement('button');
+            generateBtn.type = 'button';
+            generateBtn.className = 'btn btn-secondary';
+            generateBtn.textContent = 'Generar';
+            generateBtn.style.marginLeft = '10px';
+            generateBtn.onclick = generateDiscountCode;
+            
+            codigoInput.parentNode.style.display = 'flex';
+            codigoInput.parentNode.style.alignItems = 'center';
+            codigoInput.parentNode.appendChild(generateBtn);
+        });
+
+        // Función para duplicar evento
+        function duplicateEvent(eventId) {
+            const event = events.find(e => e.id === eventId);
+            if (!event) return;
+            
+            openEventModal();
+            
+            // Poblar formulario con datos del evento original
+            setTimeout(() => {
+                document.getElementById('titulo').value = `${event.titulo} (Copia)`;
+                document.getElementById('tipo').value = event.tipo || 'promocion';
+                document.getElementById('descripcion').value = event.descripcion || '';
+                document.getElementById('descuentoPorcentaje').value = event.descuento_porcentaje || '';
+                document.getElementById('descuentoMonto').value = event.descuento_monto || '';
+                document.getElementById('prioridad').value = event.prioridad || 0;
+                document.getElementById('limitePorCliente').value = event.limite_por_cliente || 1;
+                document.getElementById('colorDestacado').value = event.color_destacado || '#0645ad';
+                document.getElementById('productosAplicables').value = event.productos_aplicables || '';
+                document.getElementById('activo').checked = false; // Crear inactivo por defecto
+                document.getElementById('mostrarEnBanner').checked = event.mostrar_en_banner;
+                document.getElementById('mostrarEnInicio').checked = event.mostrar_en_inicio;
+                
+                // Generar nuevo código de descuento si tenía uno
+                if (event.codigo_descuento) {
+                    generateDiscountCode();
+                }
+            }, 100);
+        }
+
+        // Agregar botón duplicar a las acciones de eventos (actualizar renderEvents)
+        const originalRenderEvents = renderEvents;
+        renderEvents = function(eventsList) {
+            const container = document.getElementById('eventsList');
+            
+            if (eventsList.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📅</div>
+                        <h3>No hay eventos creados</h3>
+                        <p>Crea tu primer evento o promoción para comenzar</p>
+                        <button class="btn btn-primary" onclick="openEventModal()">Crear Evento</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = eventsList.map(event => `
+                <div class="event-item" data-event-id="${event.id}">
+                    <div class="event-header">
+                        <div class="event-info">
+                            <div class="event-title">${event.titulo}</div>
+                            <div class="event-meta">
+                                <span class="event-type type-${event.tipo}">${event.tipo}</span>
+                                <span class="event-status ${getEventStatus(event)}">${getEventStatusText(event)}</span>
+                                ${event.created_at ? `• Creado: ${new Date(event.created_at).toLocaleDateString()}` : ''}
+                            </div>
+                            ${event.descripcion ? `<div class="event-description">${event.descripcion}</div>` : ''}
+                            ${renderEventDetails(event)}
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn" onclick="duplicateEvent(${event.id})" title="Duplicar evento">Duplicar</button>
+                            <button class="btn btn-primary" onclick="editEvent(${event.id})">Editar</button>
+                            <button class="btn ${event.activo ? 'btn-warning' : 'btn-success'}" onclick="toggleEventStatus(${event.id}, ${event.activo})">
+                                ${event.activo ? 'Desactivar' : 'Activar'}
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteEvent(${event.id}, '${event.titulo}')">Eliminar</button>
+                        </div>
+                    </div>
+                    ${renderEventStats(event)}
+                </div>
+            `).join('');
+        };
+    </script>
+</body>
+</html>

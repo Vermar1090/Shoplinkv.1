@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Tienda - Panel Administrativo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f8f9fa;
+        }
+        .wiki-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+        }
+        .wiki-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #a2a9b1;
+            padding: 1rem 1.5rem;
+        }
+        .wiki-title {
+            font-size: 1.75rem;
+            font-weight: 400;
+            color: #202122;
+            margin: 0;
+        }
+        .wiki-subtitle {
+            color: #54595d;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .wiki-content {
+            padding: 1.5rem;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: #202122;
+            border-bottom: 1px solid #a2a9b1;
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .section-title:first-child {
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #202122;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3366cc;
+            box-shadow: 0 0 0 1px #3366cc;
+        }
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .btn-primary {
+            background: #3366cc;
+            color: white;
+            padding: 0.625rem 1.25rem;
+            border: none;
+            border-radius: 2px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background: #2952a3;
+        }
+        .btn-secondary {
+            background: #eaecf0;
+            color: #202122;
+            padding: 0.625rem 1.25rem;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-secondary:hover {
+            background: #dfe2e6;
+        }
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #a2a9b1;
+            border-left: 4px solid #3366cc;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 2px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            border: 1px solid #a2a9b1;
+            padding: 1rem;
+            border-radius: 2px;
+        }
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #202122;
+        }
+        .stat-label {
+            color: #54595d;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #c8ccd1;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: #3366cc;
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .notification.success {
+            background: #00af89;
+            color: white;
+        }
+        .notification.error {
+            background: #d33;
+            color: white;
+        }
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            background: #f8f9fa;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
+            padding: 1rem;
+        }
+        .sidebar-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #202122;
+        }
+        .sidebar-link {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            color: #3366cc;
+            text-decoration: none;
+            border-radius: 2px;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .sidebar-link:hover {
+            background: #eaecf0;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="bg-white border-b border-gray-300 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <i class="fas fa-store text-2xl text-blue-600"></i>
+                <div>
+                    <h1 id="storeTitle" class="text-xl font-semibold text-gray-800">Cargando...</h1>
+                    <p id="storeInfo" class="text-sm text-gray-600">Panel Administrativo</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <a id="viewStoreLink" href="#" target="_blank" class="btn-secondary" style="display: none;">
+                    <i class="fas fa-external-link-alt mr-2"></i>Ver Tienda
+                </a>
+                <button onclick="window.location.href='/dashboard'" class="btn-secondary">
+                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="sidebar">
+                    <h3 class="sidebar-title">Navegación</h3>
+                    
+                    <a href="#estadisticas" class="sidebar-link">Estadísticas</a>   
+                    <a href="#informacion-basica" class="sidebar-link">Información Básica</a>
+                    <a href="#contacto" class="sidebar-link">Contacto</a>
+                    <a href="#horarios" class="sidebar-link">Horarios</a>
+                    <a href="#configuracion" class="sidebar-link">Configuración Visual</a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="lg:col-span-3">
+                <div class="wiki-container">
+                    <div class="wiki-header">
+                        <h1 class="wiki-title">Editar Tienda</h1>
+                        <p class="wiki-subtitle" id="welcomeMessage">Gestiona tu tienda desde aquí</p>
+                    </div>
+
+                    <div class="wiki-content">
+                        <!-- Estadísticas -->
+                        <div id="estadisticas">
+                            <h2 class="section-title">Estadísticas</h2>
+                            <div class="stats-grid" id="statsGrid">
+                                <div class="stat-card">
+                                    <div class="stat-value" id="statProductos">-</div>
+                                    <div class="stat-label">Productos Activos</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value" id="statOrdenes">-</div>
+                                    <div class="stat-label">Órdenes Totales</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value" id="statCalificacion">-</div>
+                                    <div class="stat-label">Calificación Promedio</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formulario -->
+                        <form id="storeForm">
+                            <!-- Información Básica -->
+                            <div id="informacion-basica">
+                                <h2 class="section-title">Información Básica</h2>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Nombre de la Tienda *</label>
+                                    <input type="text" id="nombre" name="nombre" class="form-input" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Descripción</label>
+                                    <textarea id="descripcion" name="descripcion" class="form-input form-textarea"></textarea>
+                                    <p class="text-xs text-gray-600 mt-1">Describe brevemente tu tienda y lo que ofreces</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Categoría</label>
+                                    <select id="categoria" name="categoria" class="form-input">
+                                        <option value="">Seleccionar categoría</option>
+                                        <option value="Restaurante">Restaurante</option>
+                                        <option value="Cafetería">Cafetería</option>
+                                        <option value="Panadería">Panadería</option>
+                                        <option value="Comida Rápida">Comida Rápida</option>
+                                        <option value="Pizzería">Pizzería</option>
+                                        <option value="Heladería">Heladería</option>
+                                        <option value="Bar">Bar</option>
+                                        <option value="Tienda">Tienda</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Contacto -->
+                            <div id="contacto">
+                                <h2 class="section-title">Información de Contacto</h2>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">WhatsApp</label>
+                                    <input type="tel" id="whatsapp" name="whatsapp" class="form-input" placeholder="+57 300 123 4567">
+                                    <p class="text-xs text-gray-600 mt-1">Formato: +57 seguido del número</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Dirección</label>
+                                    <input type="text" id="direccion" name="direccion" class="form-input" placeholder="Calle 10 #20-30, Cartagena">
+                                </div>
+                            </div>
+
+                            <!-- Horarios -->
+                            <div id="horarios">
+                                <h2 class="section-title">Horarios de Atención</h2>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Horarios</label>
+                                    <textarea id="horarios_input" name="horarios" class="form-input form-textarea" placeholder="Ejemplo:&#10;Lunes a Viernes: 9:00 AM - 8:00 PM&#10;Sábados: 10:00 AM - 6:00 PM&#10;Domingos: Cerrado"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Configuración Visual -->
+                            <div id="configuracion">
+                                <h2 class="section-title">Configuración Visual</h2>
+                                
+                                <div class="info-box">
+                                    <p class="text-sm">
+                                        <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+                                        Para personalizar colores, logo y banner, visita la sección de 
+                                        <a href="/configuracionAvance" class="text-blue-600 hover:underline">Configuración Avanzada</a>
+                                    </p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="flex items-center justify-between">
+                                        <span class="form-label mb-0">Tienda Activa</span>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="activa" name="activa">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </label>
+                                    <p class="text-xs text-gray-600 mt-1">Cuando está inactiva, los clientes no pueden ver tu tienda</p>
+                                </div>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="flex gap-3 mt-8 pt-6 border-t border-gray-300">
+                                <button type="submit" class="btn-primary" id="saveBtn">
+                                    <i class="fas fa-save mr-2"></i>Guardar Cambios
+                                </button>
+                                <button type="button" onclick="loadUserStore()" class="btn-secondary">
+                                    <i class="fas fa-undo mr-2"></i>Descartar Cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const appState = {
+            tiendaId: null,
+            storeData: null
+        };
+
+        // Cargar datos de la tienda del usuario
+        async function loadUserStore() {
+            const userId = localStorage.getItem('userId');
+            
+            if (!userId) {
+                showNotification('No se encontró ID de usuario', 'error');
+                window.location.href = '/';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/tiendas/por-usuario/${userId}`);
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showNotification('No tienes una tienda registrada', 'error');
+                        setTimeout(() => window.location.href = '/', 2000);
+                        return;
+                    }
+                    throw new Error('Error al cargar la tienda');
+                }
+
+                const store = await response.json();
+                appState.tiendaId = store.id;
+                appState.storeData = store;
+                
+                // Actualizar header
+                document.getElementById('storeTitle').textContent = `${store.nombre} - Panel Administrativo`;
+                document.getElementById('storeInfo').textContent = `${store.categoria || 'Tienda'} • ${store.activa ? 'Activa' : 'Inactiva'}`;
+                document.getElementById('welcomeMessage').textContent = `Gestiona ${store.nombre} desde aquí`;
+                
+                // Actualizar enlace de ver tienda
+                const viewLink = document.getElementById('viewStoreLink');
+                viewLink.href = `/tienda/${store.token}`;
+                viewLink.style.display = 'inline-flex';
+                
+                // Cargar estadísticas
+                updateStoreStats(store);
+                
+                // Llenar formulario
+                fillFormData(store);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error al cargar los datos de la tienda', 'error');
+            }
+        }
+
+        // Actualizar estadísticas
+        function updateStoreStats(store) {
+            document.getElementById('statProductos').textContent = store.total_productos || 0;
+            document.getElementById('statOrdenes').textContent = store.total_ordenes || 0;
+            
+            const rating = store.promedio_calificacion;
+            document.getElementById('statCalificacion').textContent = rating ? `${rating} ⭐` : 'Sin calificaciones';
+        }
+
+        // Llenar formulario con datos
+        function fillFormData(store) {
+            document.getElementById('nombre').value = store.nombre || '';
+            document.getElementById('descripcion').value = store.descripcion || '';
+            document.getElementById('categoria').value = store.categoria || '';
+            document.getElementById('whatsapp').value = store.whatsapp || '';
+            document.getElementById('direccion').value = store.direccion || '';
+            document.getElementById('horarios_input').value = store.horarios || '';
+            document.getElementById('activa').checked = store.activa == 1;
+        }
+
+        // Guardar cambios
+        document.getElementById('storeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!appState.tiendaId) {
+                showNotification('No se puede actualizar: ID de tienda no encontrado', 'error');
+                return;
+            }
+
+            const saveBtn = document.getElementById('saveBtn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<span class="loading mr-2"></span>Guardando...';
+
+            const formData = {
+                nombre: document.getElementById('nombre').value,
+                descripcion: document.getElementById('descripcion').value,
+                categoria: document.getElementById('categoria').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                direccion: document.getElementById('direccion').value,
+                horarios: document.getElementById('horarios_input').value,
+                activa: document.getElementById('activa').checked ? 1 : 0
+            };
+
+            try {
+                const response = await fetch(`/api/tiendas/${appState.tiendaId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al actualizar la tienda');
+                }
+
+                showNotification('Tienda actualizada correctamente', 'success');
+                
+                // Recargar datos
+                setTimeout(() => loadUserStore(), 1000);
+
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification(error.message, 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = originalText;
+            }
+        });
+
+        // Mostrar notificación
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>
+                ${message}
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Smooth scroll para enlaces del sidebar
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Cargar datos al iniciar
+        window.addEventListener('DOMContentLoaded', loadUserStore);
+    </script>
+</body>
+</html>
